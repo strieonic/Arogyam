@@ -24,7 +24,7 @@ const AdminLogin = () => {
       navigate('/admin/dashboard');
     } catch (err) {
       // Fallback: hardcoded credentials for offline dev
-      if (email === 'admin@arogyam.com' && password === 'admin_password') {
+      if (email === 'admin@arogyam.com' && password === 'admin123') {
         localStorage.setItem('adminAuth', 'true');
         navigate('/admin/dashboard');
       } else {
