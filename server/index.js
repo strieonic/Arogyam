@@ -165,9 +165,9 @@ app.use((err, req, res, next) => {
   }
 
   // Production safety
-  if (process.env.NODE_ENV === "production" && status === 500) {
-    message = "An unexpected server error occurred.";
-  }
+  // if (process.env.NODE_ENV === "production" && status === 500) {
+  //   message = "An unexpected server error occurred.";
+  // }
 
   console.error(`[${new Date().toISOString()}] ${req.method} ${req.path} → ${status}: ${err.message}`);
   if (status === 500) console.error(err.stack);
