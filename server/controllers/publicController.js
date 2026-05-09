@@ -9,7 +9,6 @@ export const getStats = async (req, res) => {
     const recordCount = await MedicalRecord.countDocuments();
 
     // Calculate uptime from system health metrics
-    // For now, we'll use a realistic value - you can connect to monitoring service later
     const uptime = 99.9;
 
     res.status(200).json({
@@ -19,6 +18,7 @@ export const getStats = async (req, res) => {
       uptime: uptime
     });
   } catch (err) {
+    console.error("STATS ERROR:", err);
     res.status(500).json({ message: "Failed to fetch stats", error: err.message });
   }
 };

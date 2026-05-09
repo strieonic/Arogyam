@@ -205,9 +205,9 @@ const AdminDashboard = () => {
   /* ── Hospital actions ── */
   const handleHospitalAction = async (id, action) => {
     try {
-      if (action === 'approve') await api.put(`/admin/approve/${id}`);
-      else if (action === 'reject') await api.put(`/admin/reject/${id}`);
-      else if (action === 'delete') await api.delete(`/admin/hospital/${id}`);
+      if (action === 'approve') await api.put(`/admin/hospitals/${id}/approve`);
+      else if (action === 'reject') await api.put(`/admin/hospitals/${id}/reject`);
+      else if (action === 'delete') await api.delete(`/admin/hospitals/${id}`);
       setConfirmAction(null);
       setSelectedHospital(null);
       await Promise.all([fetchHospitals(), fetchStats()]);
@@ -219,7 +219,7 @@ const AdminDashboard = () => {
   /* ── View hospital detail ── */
   const handleViewHospital = async (id) => {
     try {
-      const res = await api.get(`/admin/hospital/${id}`);
+      const res = await api.get(`/admin/hospitals/${id}`);
       setSelectedHospital(res.data);
     } catch (err) {
       console.error('Hospital detail fetch failed:', err);

@@ -225,7 +225,7 @@ export const registerHospital = async (req, res) => {
 
 /* ======================================================
    HOSPITAL LOGIN (AFTER ADMIN APPROVAL)
-====================================================== */
+ ====================================================== */
 export const loginHospital = async (req, res) => {
   try {
     const { email, password } = req.body;

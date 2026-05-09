@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import api from '../../api/axios';
+import { toast } from 'sonner';
 
 const HospitalRegister = () => {
   const { t } = useTranslation();
@@ -31,9 +32,11 @@ const HospitalRegister = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setMessage(res.data.message || 'Registration submitted for approval.');
+      toast.success(res.data.message || 'Registration submitted for approval.');
       setTimeout(() => navigate('/hospital/login'), 3000);
     } catch (err) {
       setMessage(err.response?.data?.message || 'Registration failed.');
+      toast.error(err.response?.data?.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
