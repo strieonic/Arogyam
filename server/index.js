@@ -70,6 +70,8 @@ const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:5173",
   "http://localhost:5174",
   "https://arogyam.vercel.app",
+  "https://health1-lilac.vercel.app",
+  "https://health1-hh2haa8ga-strieonics-projects.vercel.app",
 ];
 
 app.use(
