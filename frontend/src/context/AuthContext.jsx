@@ -17,9 +17,15 @@ export const AuthProvider = ({ children }) => {
       if (token && storedRole) {
         setRole(storedRole);
         try {
-          const endpoint = storedRole === 'patient' ? '/patient/profile' : '/hospital/profile';
+          let endpoint = '/patient/profile';
+          if (storedRole === 'hospital' || storedRole === 'hospital_admin') {
+            endpoint = '/hospital/profile';
+          } else if (storedRole === 'doctor') {
+            endpoint = '/doctor/profile'; // Or whatever route we create for doctor profile
+          }
           const res = await api.get(endpoint);
           setUser(res.data);
+
         } catch (error) {
           console.error('Auth check failed', error);
           logout();

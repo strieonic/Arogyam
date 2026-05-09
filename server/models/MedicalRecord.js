@@ -29,4 +29,11 @@ const medicalRecordSchema = new mongoose.Schema({
 
   createdAt: { type: Date, default: Date.now },
 });
+
+// Indexes: most queries filter by patient, then sort by date
+medicalRecordSchema.index({ patient: 1, createdAt: -1 });
+medicalRecordSchema.index({ patient: 1, recordType: 1 });
+medicalRecordSchema.index({ hospital: 1, createdAt: -1 });
+
 export default mongoose.model("MedicalRecord", medicalRecordSchema);
+

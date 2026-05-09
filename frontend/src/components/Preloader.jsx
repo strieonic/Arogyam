@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Preloader = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(() => {
-    return !sessionStorage.getItem('healthid-preloader-done');
+    return !sessionStorage.getItem('arogyam-preloader-done');
   });
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
@@ -29,7 +29,7 @@ const Preloader = ({ onComplete }) => {
         setTimeout(() => {
           if (isCancelled) return;
           setVisible(false);
-          sessionStorage.setItem('healthid-preloader-done', 'true');
+          sessionStorage.setItem('arogyam-preloader-done', 'true');
           onCompleteRef.current?.();
         }, 500);
         return;
@@ -100,7 +100,7 @@ const Preloader = ({ onComplete }) => {
               letterSpacing: '-0.03em',
             }}
           >
-            Health<span style={{ color: '#FF3366' }}>ID</span>
+            Aro<span style={{ color: '#FF3366' }}>gyam</span>
           </motion.div>
 
           {/* Progress */}

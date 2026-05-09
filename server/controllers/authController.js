@@ -66,23 +66,26 @@ export const registerPatient = async (req, res) => {
 
 export const sendPatientOTP = async (req, res) => {
   try {
-    const { phone } = req.body; // 'phone' field from UI might contain email
+    const { phone, identifier } = req.body; 
+    const queryVal = phone || identifier;
+
+    if (!queryVal) return res.status(400).json({ message: "Identifier (phone/email) required" });
 
     const patient = await Patient.findOne({
-      $or: [{ phone }, { email: phone }, { healthId: phone }],
+      $or: [{ phone: queryVal }, { email: queryVal }, { healthId: queryVal }],
     });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found. Please register first." });
     }
 
-    const otp = await generateOTP(patient._id, patient.email);
+    const otp = await generateOTP(patient.email);
 
     patient.loginOTP = otp;
     patient.otpExpiry = Date.now() + 5 * 60 * 1000;
     await patient.save();
 
-    res.json({ message: "OTP sent successfully" });
+    res.json({ message: "OTP sent successfully", devOTP: otp });
   } catch (error) {
     console.error("OTP ERROR:", error);
     res.status(500).json({ message: "OTP sending failed" });
@@ -91,10 +94,13 @@ export const sendPatientOTP = async (req, res) => {
 
 export const verifyPatientOTP = async (req, res) => {
   try {
-    const { phone, otp } = req.body;
+    const { phone, identifier, otp } = req.body;
+    const queryVal = phone || identifier;
+
+    if (!queryVal || !otp) return res.status(400).json({ message: "Identifier and OTP required" });
 
     const patient = await Patient.findOne({
-      $or: [{ phone }, { email: phone }, { healthId: phone }],
+      $or: [{ phone: queryVal }, { email: queryVal }, { healthId: queryVal }],
     });
 
     if (!patient) return res.status(404).json({ message: "Patient not found" });
@@ -162,7 +168,7 @@ export const registerHospital = async (req, res) => {
       licenseText = await extractTextFromPDF(tempPath);
       fs.unlinkSync(tempPath);
     } catch (ocrErr) {
-      console.log("OCR failed, using test fallback");
+      console.warn("OCR failed, using test fallback for hospital registration");
       licenseText = "TEST_LICENSE_APPROVED_HOSPITAL_LICENSE_GOVERNMENT_UNIT";
       if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
     }
@@ -187,7 +193,7 @@ export const registerHospital = async (req, res) => {
     if (req.file) {
       const uploadResult = await uploadBufferToCloudinary(
         req.file.buffer,
-        "healthid/licenses",
+        "arogyam/licenses",
       );
       secure_url = uploadResult.secure_url;
     }
@@ -204,16 +210,17 @@ export const registerHospital = async (req, res) => {
       password: hashedPassword,
       licencePdf: secure_url,
       trustScore: validation.trustScore,
-      status: validation.status,
-      verifiedByAdmin: validation.status === "approved",
+      verificationStatus: "pending", // Force manual verification
+      submittedDocuments: [secure_url]
     });
 
     res.status(201).json({
       hospital,
       message: "Hospital submitted successfully. Awaiting admin approval.",
-      status: hospital.status,
+      verificationStatus: hospital.verificationStatus,
     });
   } catch (error) {
+
     console.error("🔥 Hospital Register Error:", error);
     res.status(500).json({ 
       message: "Hospital registration failed",
@@ -242,15 +249,18 @@ export const loginHospital = async (req, res) => {
       return res.status(404).json({ message: "Hospital not found" });
 
     /* ================= CHECK STATUS ================= */
-    if (hospital.status === "pending")
+    if (hospital.verificationStatus === "rejected")
       return res.status(403).json({
-        message: "Hospital not approved by admin yet",
+        message: "Hospital registration was rejected. Please contact support.",
+      });
+      
+    if (hospital.verificationStatus === "suspended")
+      return res.status(403).json({
+        message: "Hospital account has been suspended.",
       });
 
-    if (hospital.status === "rejected")
-      return res.status(403).json({
-        message: "Hospital registration rejected by admin",
-      });
+    // Note: Pending hospitals are allowed to log in to see the pending screen.
+
 
     /* ================= PASSWORD CHECK ================= */
     const isMatch = await bcrypt.compare(password, hospital.password);
@@ -265,6 +275,7 @@ export const loginHospital = async (req, res) => {
       { expiresIn: "7d" },
     );
 
+
     /* ================= REMOVE PASSWORD ================= */
     const hospitalData = hospital.toObject();
     delete hospitalData.password;
@@ -275,7 +286,7 @@ export const loginHospital = async (req, res) => {
       hospital: hospitalData,
     });
   } catch (error) {
-    console.log("Hospital Login Error:", error);
+    console.error("Hospital Login Error:", error);
     res.status(500).json({ message: "Hospital login failed" });
   }
 };

@@ -18,9 +18,13 @@ transporter
   .catch((err) => console.log("SMTP ERROR:", err));
 
 const sendEmail = async (to, subject, html) => {
+  if (process.env.ENABLE_EMAILS === "false") {
+    console.log("📧 Email sending is disabled via ENABLE_EMAILS flag.");
+    return true; // Return true to avoid breaking flows that depend on email success
+  }
   try {
     const info = await transporter.sendMail({
-      from: `"HealthID" <${process.env.EMAIL_USER}>`,
+      from: `"Arogyam" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,

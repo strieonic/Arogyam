@@ -10,9 +10,6 @@ export const requestConsent = async (req, res) => {
   try {
     const { healthId } = req.body;
 
-    console.log("healthId:", healthId);
-    console.log("hospital:", req.hospital);
-
     const patient = await Patient.findOne({ healthId });
 
     if (!patient) {

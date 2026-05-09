@@ -23,15 +23,20 @@ const hospitalSchema = new mongoose.Schema(
       default: 0,
     },
 
-    status: {
+    verificationStatus: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "under_review", "approved", "rejected", "suspended"],
       default: "pending",
     },
 
-    verifiedByAdmin: { type: Boolean, default: false },
+    verificationNotes: String,
+    verifiedAt: Date,
+    verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    rejectionReason: String,
+    submittedDocuments: [String],
 
     // ⭐ system improvements
+
     lastLogin: Date,
 
     isActive: {

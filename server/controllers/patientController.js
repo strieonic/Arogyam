@@ -1,8 +1,12 @@
 import Patient from "../models/Patient.js";
 import MedicalRecord from "../models/MedicalRecord.js";
 import Consent from "../models/Consent.js";
+import Appointment from "../models/Appointment.js";
+import Prescription from "../models/Prescription.js";
 import generateHealthId from "../utils/generateHealthId.js";
+
 import generateQR from "../utils/qrGenerator.js";
+
 
 /* ======================================================
    1️⃣ GET PROFILE
@@ -195,22 +199,52 @@ export const updateFamilyMedical = async (req, res) => {
 };
 
 /* ======================================================
-   7️⃣ GET MY RECORDS
+   7️⃣ GET MY RECORDS (PAGINATED)
 ====================================================== */
 export const getMyRecords = async (req, res) => {
   try {
-    const records = await MedicalRecord.find({
-      patient: req.patient._id,
-    }).populate("hospital", "hospitalName email");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [records, prescriptions] = await Promise.all([
+      MedicalRecord.find({
+        patient: req.patient._id,
+      }).populate("hospital", "hospitalName email"),
+      Prescription.find({
+        patient: req.patient._id,
+      }).populate("hospital", "hospitalName email").populate("doctor", "name specialization")
+    ]);
+
+    // Format prescriptions to match records for the frontend
+    const formattedPrescriptions = prescriptions.map(p => ({
+      ...p.toObject(),
+      recordType: 'prescription',
+      fileUrl: null, // UI will render it natively rather than link to PDF
+      notes: p.notes || p.diagnosis
+    }));
+
+    const allRecords = [...records, ...formattedPrescriptions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    // Slice for pagination
+    const paginatedRecords = allRecords.slice(skip, skip + limit);
 
     res.json({
-      totalRecords: records.length,
-      records,
+      success: true,
+      totalRecords: allRecords.length,
+      records: paginatedRecords,
+      pagination: {
+        total: allRecords.length,
+        page,
+        limit,
+        pages: Math.ceil(allRecords.length / limit),
+      }
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch records" });
   }
 };
+
 
 /* ======================================================
    8️⃣ GET MY CONSENTS
@@ -247,5 +281,105 @@ export const getHealthCard = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch card" });
+  }
+};
+
+/* ======================================================
+   🔟 MEDICAL TIMELINE (records + consents + appointments merged)
+====================================================== */
+export const getTimeline = async (req, res) => {
+  try {
+    const patientId = req.patient._id;
+
+    const [records, consents, appointments, prescriptions] = await Promise.all([
+      MedicalRecord.find({ patient: patientId })
+        .populate("hospital", "hospitalName")
+        .sort({ createdAt: -1 })
+        .limit(50),
+      Consent.find({ patientId })
+        .populate("hospitalId", "hospitalName")
+        .sort({ createdAt: -1 })
+        .limit(30),
+      Appointment.find({ patient: patientId })
+        .populate("hospital", "hospitalName")
+        .populate("doctor", "name")
+        .sort({ date: -1 })
+        .limit(30),
+      Prescription.find({ patient: patientId })
+        .populate("hospital", "hospitalName")
+        .populate("doctor", "name")
+        .sort({ createdAt: -1 })
+        .limit(30),
+    ]);
+
+    // Normalise into a unified event list
+    const events = [
+      ...records.map((r) => ({
+        id: r._id,
+        type: "record",
+        title: `${r.recordType} uploaded`,
+        subtitle: r.hospital?.hospitalName || "Unknown hospital",
+        notes: r.notes,
+        date: r.createdAt,
+        fileUrl: r.fileUrl,
+      })),
+      ...consents.map((c) => ({
+        id: c._id,
+        type: "consent",
+        title: `Access ${c.status}`,
+        subtitle: c.hospitalId?.hospitalName || "Unknown hospital",
+        notes: null,
+        date: c.createdAt,
+        status: c.status,
+      })),
+      ...appointments.map((a) => ({
+        id: a._id,
+        type: "appointment",
+        title: `Appointment — ${a.department}`,
+        subtitle: a.doctor ? `Dr. ${a.doctor.name} (${a.hospital?.hospitalName})` : (a.hospital?.hospitalName || "Unknown hospital"),
+        notes: a.reason,
+        date: a.date,
+        status: a.status,
+        timeSlot: a.timeSlot,
+      })),
+      ...prescriptions.map((p) => ({
+        id: p._id,
+        type: "prescription",
+        title: `Digital Prescription Issued`,
+        subtitle: `Dr. ${p.doctor?.name} (${p.hospital?.hospitalName})`,
+        notes: `Diagnosis: ${p.diagnosis}. ${p.medicines.length} medicines prescribed.`,
+        date: p.createdAt,
+      }))
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.json({ success: true, total: events.length, events });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Failed to build timeline." });
+  }
+};
+
+
+/* ======================================================
+   1️⃣1️⃣ PROFILE COMPLETION SCORE
+====================================================== */
+export const getProfileCompletion = async (req, res) => {
+  try {
+    const patient = await Patient.findById(req.patient._id);
+
+    const checks = [
+      { label: "Name",             done: !!patient.name },
+      { label: "Phone",            done: !!patient.phone },
+      { label: "Blood Group",      done: !!patient.bloodGroup },
+      { label: "Emergency Contact",done: !!patient.emergencyContact },
+      { label: "Address",          done: !!patient.address },
+      { label: "Allergies",        done: !!patient.allergies },
+    ];
+
+    const completed = checks.filter((c) => c.done).length;
+    const score = Math.round((completed / checks.length) * 100);
+
+    res.json({ success: true, score, completed, total: checks.length, checks });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Failed to compute score." });
   }
 };

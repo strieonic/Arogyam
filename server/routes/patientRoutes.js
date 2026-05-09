@@ -1,3 +1,4 @@
+// server/routes/patientRoutes.js
 import express from "express";
 import {
   getPatientProfile,
@@ -9,40 +10,41 @@ import {
   getMyRecords,
   getMyConsents,
   getHealthCard,
+  getTimeline,
+  getProfileCompletion,
 } from "../controllers/patientController.js";
 
-import { protectPatient } from "../middleware/authMiddleware.js";
+import { requirePatient } from "../middleware/rbac.js";
+import { validate } from "../middleware/validate.js";
+import {
+  updateMedicalSchema,
+  addFamilyMemberSchema,
+} from "../schemas/patientSchemas.js";
 
 const router = express.Router();
 
-/* ======================================================
-   🔐 PROTECTED ROUTES
-====================================================== */
-router.use(protectPatient);
+/* ── All patient routes require valid patient JWT ── */
+router.use(requirePatient);
 
-/* ======================================================
-   👤 PROFILE
-====================================================== */
+/* ── Profile ── */
 router.get("/profile", getPatientProfile);
-router.put("/profile/update-medical", updateMedicalProfile);
+router.put("/profile/update-medical", validate(updateMedicalSchema), updateMedicalProfile);
+router.get("/profile/completion", getProfileCompletion);
 
-/* ======================================================
-   👨‍👩‍👧 FAMILY MANAGEMENT
-====================================================== */
-router.post("/family/add", addFamilyMember);
+/* ── Family Management ── */
+router.post("/family/add", validate(addFamilyMemberSchema), addFamilyMember);
 router.get("/family", getFamilyMembers);
 router.delete("/family/:memberId", removeFamilyMember);
-router.put("/family/:memberId/medical", updateFamilyMedical);
+router.put("/family/:memberId/medical", validate(updateMedicalSchema), updateFamilyMedical);
 
-/* ======================================================
-   📄 RECORDS & CONSENTS
-====================================================== */
+/* ── Records & Consents ── */
 router.get("/records", getMyRecords);
 router.get("/consents", getMyConsents);
 
-/* ======================================================
-   🚑 HEALTH CARD
-====================================================== */
+/* ── Timeline (merged events) ── */
+router.get("/timeline", getTimeline);
+
+/* ── Health Card ── */
 router.get("/healthcard", getHealthCard);
 
 export default router;

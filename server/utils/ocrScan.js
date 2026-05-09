@@ -28,7 +28,11 @@ export const extractTextFromPDF = async (filePath) => {
 export const extractTextFromImage = async (imagePath) => {
   try {
     const result = await Tesseract.recognize(imagePath, "eng", {
-      logger: (m) => console.log("OCR:", m.status),
+      logger: (m) => {
+        if (process.env.NODE_ENV === "development") {
+          console.log("OCR:", m.status);
+        }
+      },
     });
 
     return result.data.text || "";

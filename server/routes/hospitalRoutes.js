@@ -1,32 +1,33 @@
+// server/routes/hospitalRoutes.js
 import express from "express";
 import {
   getHospitalProfile,
-  searchPatientByHealthId,
+  searchPatient,
   getHospitalPatients,
 } from "../controllers/hospitalController.js";
 
-import { protectHospital } from "../middleware/hospitalAuth.js";
+
+import { requireHospitalAdmin, requireApprovedHospitalAdmin } from "../middleware/rbac.js";
+import { validate } from "../middleware/validate.js";
+import { searchPatientSchema } from "../schemas/hospitalSchemas.js";
 
 const router = express.Router();
 
-/* =========================
-   ALL HOSPITAL ROUTES PROTECTED
-========================= */
-router.use(protectHospital);
+/* ── All hospital routes require at least authenticated hospital JWT ── */
+router.use(requireHospitalAdmin);
 
-/* =========================
-   PROFILE
-========================= */
+/* ── Profile (Accessible by Pending Hospitals) ── */
 router.get("/profile", getHospitalProfile);
 
-/* =========================
-   SEARCH PATIENT BY HEALTH ID
-========================= */
-router.post("/search-patient", searchPatientByHealthId);
+/* ── Operational Routes (Require Approved Status) ── */
+router.use(requireApprovedHospitalAdmin);
 
-/* =========================
-   HOSPITAL DIRECTORY
-========================= */
+
+/* ── Smart Search Patient ── */
+router.get("/search-patient", searchPatient);
+
+
+/* ── Hospital Patient Directory ── */
 router.get("/patients", getHospitalPatients);
 
 export default router;

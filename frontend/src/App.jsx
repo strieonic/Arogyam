@@ -25,6 +25,11 @@ import HealthCard from './pages/patient/HealthCard';
 import MyHospitals from './pages/patient/MyHospitals';
 import FamilyMembers from './pages/patient/FamilyMembers';
 import MedicalProfile from './pages/patient/MedicalProfile';
+import MedicalTimeline from './pages/patient/MedicalTimeline';
+import Appointments from './pages/patient/Appointments';
+import MedicineReminders from './pages/patient/MedicineReminders';
+import SymptomCheckerPage from './pages/patient/SymptomCheckerPage';
+
 
 // Hospital Pages
 import HospitalLogin from './pages/hospital/HospitalLogin';
@@ -41,6 +46,14 @@ import ViewPatientRecords from './pages/hospital/ViewPatientRecords';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
+// Doctor Pages
+import DoctorLogin from './pages/doctor/DoctorLogin';
+import DoctorSetup from './pages/doctor/DoctorSetup';
+import DoctorDashboard from './pages/doctor/DoctorDashboard';
+
+// Shared
+import SupportCenter from './features/shared/SupportCenter';
+
 // Protected Routes wrappers
 const ProtectedPatientRoute = ({ children }) => {
   const { user, role } = useAuth();
@@ -53,6 +66,13 @@ const ProtectedHospitalRoute = ({ children }) => {
   if (!user || role !== 'hospital') return <Navigate to="/hospital/login" />;
   return children;
 };
+
+const ProtectedDoctorRoute = ({ children }) => {
+  const { user, role } = useAuth();
+  if (!user || role !== 'doctor') return <Navigate to="/doctor/login" />;
+  return children;
+};
+
 
 const ProtectedAdminRoute = ({ children }) => {
   const isAdmin = localStorage.getItem('adminAuth') === 'true';
@@ -69,7 +89,7 @@ const MainLayout = ({ children }) => {
   const layoutClass = isLanding ? 'full-bleed' : isAdmin ? 'admin-bleed' : 'constrained';
 
   return (
-    <main className={`main-content ${layoutClass}`}>
+    <main id="main-content" className={`main-content ${layoutClass}`} aria-label="Main content">
       {children}
     </main>
   );
@@ -104,6 +124,11 @@ function AppInner() {
               <Route path="/patient/hospitals" element={<ProtectedPatientRoute><MyHospitals /></ProtectedPatientRoute>} />
               <Route path="/patient/family" element={<ProtectedPatientRoute><FamilyMembers /></ProtectedPatientRoute>} />
               <Route path="/patient/profile" element={<ProtectedPatientRoute><MedicalProfile /></ProtectedPatientRoute>} />
+              <Route path="/patient/timeline" element={<ProtectedPatientRoute><MedicalTimeline /></ProtectedPatientRoute>} />
+              <Route path="/patient/appointments" element={<ProtectedPatientRoute><Appointments /></ProtectedPatientRoute>} />
+              <Route path="/patient/reminders" element={<ProtectedPatientRoute><MedicineReminders /></ProtectedPatientRoute>} />
+              <Route path="/patient/symptom-checker" element={<ProtectedPatientRoute><SymptomCheckerPage /></ProtectedPatientRoute>} />
+              <Route path="/patient/support" element={<ProtectedPatientRoute><SupportCenter /></ProtectedPatientRoute>} />
 
               {/* Hospital App Flow */}
               <Route path="/hospital/login" element={<HospitalLogin />} />
@@ -115,10 +140,17 @@ function AppInner() {
               <Route path="/hospital/patients" element={<ProtectedHospitalRoute><MyPatients /></ProtectedHospitalRoute>} />
               <Route path="/hospital/records" element={<ProtectedHospitalRoute><HospitalRecords /></ProtectedHospitalRoute>} />
               <Route path="/hospital/records/:healthId" element={<ProtectedHospitalRoute><ViewPatientRecords /></ProtectedHospitalRoute>} />
+              <Route path="/hospital/support" element={<ProtectedHospitalRoute><SupportCenter /></ProtectedHospitalRoute>} />
               
               {/* Admin Flow */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+
+              {/* Doctor Flow */}
+              <Route path="/doctor/login" element={<DoctorLogin />} />
+              <Route path="/doctor/setup" element={<DoctorSetup />} />
+              <Route path="/doctor/dashboard" element={<ProtectedDoctorRoute><DoctorDashboard /></ProtectedDoctorRoute>} />
+
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" />} />

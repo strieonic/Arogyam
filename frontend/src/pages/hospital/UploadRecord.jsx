@@ -53,7 +53,7 @@ const UploadRecord = () => {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="input-group">
-            <label>{t('hospital.patientHealthIdField')}</label>
+            <label>{t('hospital.patientArogyamField')}</label>
             <input type="text" className="glass-input" value={healthId} onChange={(e) => setHealthId(e.target.value)} required />
           </div>
 
@@ -76,7 +76,7 @@ const UploadRecord = () => {
           </div>
 
           <button type="submit" className="primary-btn" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-            {loading ? t('hospital.uploadingCloud') : t('hospital.uploadToHealthId')}
+            {loading ? t('hospital.uploadingCloud') : t('hospital.uploadToArogyam')}
           </button>
         </form>
       </div>

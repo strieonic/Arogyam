@@ -43,7 +43,7 @@ export const uploadRecord = async (req, res) => {
 
     const uploadResult = await uploadBufferToCloudinary(
       req.file.buffer,
-      "healthid/records",
+      "arogyam/records",
     );
 
     const record = await MedicalRecord.create({
@@ -99,11 +99,23 @@ export const getPatientRecords = async (req, res) => {
       return res.status(403).json({ message: "Access expired" });
     }
 
-    const records = await MedicalRecord.find({
-      patient: patient._id,
-    }).populate("hospital", "hospitalName");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [records, total] = await Promise.all([
+      MedicalRecord.find({
+        patient: patient._id,
+      })
+      .populate("hospital", "hospitalName")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+      MedicalRecord.countDocuments({ patient: patient._id })
+    ]);
 
     return res.json({
+      success: true,
       accessRemainingMinutes: Math.max(
         0,
         Math.floor(
@@ -111,6 +123,12 @@ export const getPatientRecords = async (req, res) => {
         ),
       ),
       records,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      }
     });
   } catch (err) {
     console.log("ERROR:", err);

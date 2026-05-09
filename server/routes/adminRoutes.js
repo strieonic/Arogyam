@@ -1,11 +1,16 @@
+// server/routes/adminRoutes.js
 import express from "express";
 import { adminLogin } from "../controllers/adminController.js";
-import { protectAdmin } from "../middleware/adminMiddleware.js";
+import { requireAdmin } from "../middleware/rbac.js";
+import { validate } from "../middleware/validate.js";
+import { authLimiter } from "../middleware/security.js";
+import { adminLoginSchema } from "../schemas/authSchemas.js";
 import {
   getAllHospitals,
   getHospitalDetails,
   approveHospital,
   rejectHospital,
+  suspendHospital,
   getAdminStats,
   getAllPatients,
   getAllRecords,
@@ -16,23 +21,23 @@ import {
 
 const router = express.Router();
 
-/* ======================================================
-   ADMIN LOGIN
-====================================================== */
-router.post("/login", adminLogin);
+/* ── Admin Login (rate limited + validated) ── */
+router.post("/login", authLimiter, validate(adminLoginSchema), adminLogin);
 
-router.get("/hospitals", protectAdmin, getAllHospitals);
-router.get("/hospitals/:id", protectAdmin, getHospitalDetails);
+/* ── Protected admin actions — all require requireAdmin ── */
+router.get("/stats",            requireAdmin, getAdminStats);
+router.get("/hospitals",        requireAdmin, getAllHospitals);
+router.get("/hospitals/:id",    requireAdmin, getHospitalDetails);
+router.put("/hospitals/:id/approve", requireAdmin, approveHospital);
+router.put("/hospitals/:id/reject",  requireAdmin, rejectHospital);
+router.put("/hospitals/:id/suspend", requireAdmin, suspendHospital);
+router.delete("/hospitals/:id",      requireAdmin, deleteHospital);
 
-router.put("/hospitals/:id/approve", protectAdmin, approveHospital);
-router.put("/hospitals/:id/reject", protectAdmin, rejectHospital);
 
-router.get("/stats", protectAdmin, getAdminStats);
-router.get("/patients", protectAdmin, getAllPatients);
-router.get("/records", protectAdmin, getAllRecords);
-router.get("/consents", protectAdmin, getAllConsents);
+router.get("/patients",         requireAdmin, getAllPatients);
+router.delete("/patients/:id",  requireAdmin, deletePatient);
 
-router.delete("/hospitals/:id", protectAdmin, deleteHospital);
-router.delete("/patients/:id", protectAdmin, deletePatient);
+router.get("/records",          requireAdmin, getAllRecords);
+router.get("/consents",         requireAdmin, getAllConsents);
 
 export default router;

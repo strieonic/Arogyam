@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../i18n/i18n';
+import NotificationBell from './NotificationBell';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -181,8 +182,10 @@ const Navbar = () => {
                   <>
                     <Link to="/patient/dashboard" className="nav-link">{t('nav.dashboard')}</Link>
                     <Link to="/patient/records" className="nav-link">{t('nav.records')}</Link>
+                    <Link to="/patient/symptom-checker" className="nav-link">Symptom Checker</Link>
                     <Link to="/patient/consents" className="nav-link">{t('nav.consents')}</Link>
                     <Link to="/patient/healthcard" className="nav-link">{t('nav.healthCard')}</Link>
+                    <Link to="/patient/support" className="nav-link">Support</Link>
                   </>
                 )}
                 {role === 'hospital' && (
@@ -192,9 +195,11 @@ const Navbar = () => {
                     <Link to="/hospital/consent" className="nav-link">{t('nav.consent')}</Link>
                     <Link to="/hospital/upload" className="nav-link">{t('nav.upload')}</Link>
                     <Link to="/hospital/patients" className="nav-link">{t('nav.directory')}</Link>
+                    <Link to="/hospital/support" className="nav-link">Support</Link>
                   </>
                 )}
                 <div className="nav-user-controls">
+                  <NotificationBell />
                   <span className="user-greeting">{user.name || user.hospitalName || 'User'}</span>
                   <button onClick={handleLogout} className="ghost-btn btn-sm">{t('common.logout')}</button>
                 </div>
@@ -291,10 +296,16 @@ const Navbar = () => {
                           <Link to="/patient/records" className="mobile-link" onClick={closeMenu}>{t('nav.records')}</Link>
                         </motion.div>
                         <motion.div custom={2} initial="hidden" animate="visible" variants={navLinkVariants}>
-                          <Link to="/patient/consents" className="mobile-link" onClick={closeMenu}>{t('nav.consents')}</Link>
+                          <Link to="/patient/symptom-checker" className="mobile-link" onClick={closeMenu}>Symptom Checker</Link>
                         </motion.div>
                         <motion.div custom={3} initial="hidden" animate="visible" variants={navLinkVariants}>
+                          <Link to="/patient/consents" className="mobile-link" onClick={closeMenu}>{t('nav.consents')}</Link>
+                        </motion.div>
+                        <motion.div custom={4} initial="hidden" animate="visible" variants={navLinkVariants}>
                           <Link to="/patient/healthcard" className="mobile-link" onClick={closeMenu}>{t('nav.healthCard')}</Link>
+                        </motion.div>
+                        <motion.div custom={5} initial="hidden" animate="visible" variants={navLinkVariants}>
+                          <Link to="/patient/support" className="mobile-link" onClick={closeMenu}>Support</Link>
                         </motion.div>
                       </>
                     )}
@@ -315,9 +326,12 @@ const Navbar = () => {
                         <motion.div custom={4} initial="hidden" animate="visible" variants={navLinkVariants}>
                           <Link to="/hospital/patients" className="mobile-link" onClick={closeMenu}>{t('nav.directory')}</Link>
                         </motion.div>
+                        <motion.div custom={5} initial="hidden" animate="visible" variants={navLinkVariants}>
+                          <Link to="/hospital/support" className="mobile-link" onClick={closeMenu}>Support</Link>
+                        </motion.div>
                       </>
                     )}
-                    <motion.div custom={5} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-user-section">
+                    <motion.div custom={6} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-user-section">
                       <span className="mobile-user-name">{user.name || user.hospitalName || 'User'}</span>
                       <button onClick={handleLogout} className="ghost-btn">{t('common.logout')}</button>
                     </motion.div>
@@ -325,7 +339,7 @@ const Navbar = () => {
                 )}
                 
                 {/* Mobile Language Selector */}
-                <motion.div custom={6} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-lang-section">
+                <motion.div custom={7} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-lang-section">
                   <span className="mobile-section-label">{t('common.selectLanguage')}</span>
                   <div className="mobile-lang-grid">
                     {LANGUAGES.map((lang) => (
@@ -340,7 +354,7 @@ const Navbar = () => {
                   </div>
                 </motion.div>
 
-                <motion.div custom={7} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-theme-toggle">
+                <motion.div custom={8} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-theme-toggle">
                   <button onClick={toggleTheme} className="ghost-btn">
                     {theme === 'dark' ? t('common.switchToLight') : t('common.switchToDark')}
                   </button>

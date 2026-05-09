@@ -139,7 +139,7 @@ const FamilyMembers = () => {
               </div>
               
               <div style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                <p><strong>Health ID:</strong> <span style={{ fontFamily: 'monospace', color: 'var(--accent-pink)' }}>{member.healthId}</span></p>
+                <p><strong>Arogyam ID:</strong> <span style={{ fontFamily: 'monospace', color: 'var(--accent-pink)' }}>{member.healthId}</span></p>
                 {member.bloodGroup && <p><strong>Blood Group:</strong> {member.bloodGroup}</p>}
                 {member.allergies && <p><strong>Allergies:</strong> {member.allergies}</p>}
               </div>

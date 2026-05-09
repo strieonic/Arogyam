@@ -4,11 +4,12 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import api from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
+import { sendOTP, verifyOTP } from '../../services/authService';
 import { FaPhoneAlt, FaKey, FaUser } from 'react-icons/fa';
 
 const PatientLogin = () => {
   const { t } = useTranslation();
-  const [phone, setPhone] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [otp, setOtp] = useState('');
   const [devOTP, setDevOTP] = useState('');
   const [step, setStep] = useState(1);
@@ -22,7 +23,7 @@ const PatientLogin = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.post('/auth/patient/send-otp', { phone });
+      const res = await sendOTP(identifier);
       setDevOTP(res.data.devOTP || '');
       setStep(2);
     } catch (err) {
@@ -37,7 +38,7 @@ const PatientLogin = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.post('/auth/patient/verify-otp', { phone, otp });
+      const res = await verifyOTP(identifier, otp);
       login(res.data.patient, res.data.token, 'patient');
       navigate('/patient/dashboard');
     } catch (err) {
@@ -62,17 +63,19 @@ const PatientLogin = () => {
         {step === 1 ? (
           <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className="input-group">
-              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{t('patient.loginPhoneLabel')}</label>
+              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                Phone, Email, or Arogyam ID
+              </label>
               <div style={{ position: 'relative', marginTop: '0.5rem' }}>
                 <FaUser style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
                 <input 
                   type="text" 
                   className="glass-input" 
                   style={{ paddingLeft: '45px' }} 
-                  placeholder={t('patient.loginPhonePlaceholder')} 
+                  placeholder="Enter your identifier" 
                   required 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)} 
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)} 
                 />
               </div>
             </div>
@@ -102,7 +105,7 @@ const PatientLogin = () => {
                   onChange={(e) => setOtp(e.target.value)} 
                 />
               </div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--success)', marginTop: '0.5rem' }}>{t('patient.otpSent', { phone })}</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--success)', marginTop: '0.5rem' }}>OTP sent to registered email for {identifier}</p>
             </div>
             <button type="submit" className="primary-btn" disabled={loading} style={{ width: '100%' }}>
               {loading ? t('patient.verifying') : t('patient.verifyLogin')}
@@ -111,7 +114,7 @@ const PatientLogin = () => {
         )}
 
         <p className="text-center" style={{ marginTop: '2rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-          {t('patient.noHealthId')} <Link to="/patient/register" style={{ color: 'var(--secondary-color)' }}>{t('patient.registerLink')}</Link>
+          {t('patient.noArogyam')} <Link to="/patient/register" style={{ color: 'var(--secondary-color)' }}>{t('patient.registerLink')}</Link>
         </p>
       </div>
     </motion.div>
