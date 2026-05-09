@@ -10,6 +10,8 @@ import {
   getAllPatients,
   getAllRecords,
   getAllConsents,
+  deleteHospital,
+  deletePatient,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -29,5 +31,8 @@ router.get("/stats", protectAdmin, getAdminStats);
 router.get("/patients", protectAdmin, getAllPatients);
 router.get("/records", protectAdmin, getAllRecords);
 router.get("/consents", protectAdmin, getAllConsents);
+
+router.delete("/hospitals/:id", protectAdmin, deleteHospital);
+router.delete("/patients/:id", protectAdmin, deletePatient);
 
 export default router;

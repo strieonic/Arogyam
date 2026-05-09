@@ -361,6 +361,7 @@
     "approveHospital": "மருத்துவமனையை ஒப்புதல் அளிக்க",
     "rejectHospital": "மருத்துவமனையை நிராகரிக்க",
     "deleteHospital": "மருத்துவமனையை நீக்குக",
+    "deletePatient": "???????? ???????",
     "areYouSureAction": "நீங்கள் உறுதியாக {{name}} ஐ {{action}} செய்ய விரும்புகிறீர்களா?",
     "actionCannotBeUndone": "இந்தச் செயலை மீண்டும் திரும்பப் பெற இயலாது."
   }

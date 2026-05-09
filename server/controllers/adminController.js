@@ -216,4 +216,45 @@ export const getAllConsents = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch consents" });
   }
+};/* ======================================================
+   DELETE HOSPITAL
+====================================================== */
+export const deleteHospital = async (req, res) => {
+  try {
+    const hospital = await Hospital.findByIdAndDelete(req.params.id);
+    if (!hospital) {
+      return res.status(404).json({ message: "Hospital not found" });
+    }
+    // Also delete associated medical records? (Optional but good for cleanup)
+    await MedicalRecord.deleteMany({ hospital: req.params.id });
+    
+    res.status(200).json({ message: "Hospital and associated records deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete hospital" });
+  }
+};
+
+/* ======================================================
+   DELETE PATIENT
+====================================================== */
+export const deletePatient = async (req, res) => {
+  try {
+    const patient = await Patient.findByIdAndDelete(req.params.id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+    // Cleanup: remove from familyMembers of other patients
+    await Patient.updateMany(
+      { familyMembers: req.params.id },
+      { $pull: { familyMembers: req.params.id } }
+    );
+    // Delete associated medical records
+    await MedicalRecord.deleteMany({ patient: req.params.id });
+    // Delete associated consents
+    await Consent.deleteMany({ patientId: req.params.id });
+
+    res.status(200).json({ message: "Patient and all associated data deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete patient" });
+  }
 };

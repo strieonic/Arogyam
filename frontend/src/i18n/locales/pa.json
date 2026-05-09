@@ -361,6 +361,7 @@
     "approveHospital": "ਹਸਪਤਾਲ ਨੂੰ ਮਨਜ਼ੂਰ ਕਰੋ",
     "rejectHospital": "ਹਸਪਤਾਲ ਨੂੰ ਰੱਦ ਕਰੋ",
     "deleteHospital": "ਹਸਪਤਾਲ ਮਿਟਾਓ",
+    "deletePatient": "????? ?????",
     "areYouSureAction": "ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ 'ਤੇ {{name}} ਨੂੰ {{action}} ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
     "actionCannotBeUndone": "ਇਹ ਕਾਰਵਾਈ ਵਾਪਸ ਨਹੀਂ ਲਈ ਜਾ ਸਕਦੀ।"
   }

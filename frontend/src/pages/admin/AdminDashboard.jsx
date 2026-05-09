@@ -216,6 +216,17 @@ const AdminDashboard = () => {
     }
   };
 
+  /* ── Patient actions ── */
+  const handlePatientAction = async (id, action) => {
+    try {
+      if (action === 'delete') await api.delete(`/admin/patients/${id}`);
+      setConfirmAction(null);
+      await Promise.all([fetchPatients(), fetchStats()]);
+    } catch (err) {
+      alert(t('admin.actionFailed'));
+    }
+  };
+
   /* ── View hospital detail ── */
   const handleViewHospital = async (id) => {
     try {
@@ -568,6 +579,7 @@ const AdminDashboard = () => {
                   <th>{t('common.phone')}</th>
                   <th>{t('admin.bloodGroup')}</th>
                   <th>{t('admin.registered')}</th>
+                  <th>{t('admin.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -583,6 +595,13 @@ const AdminDashboard = () => {
                     <td>{p.phone}</td>
                     <td>{p.bloodGroup || '—'}</td>
                     <td>{formatDate(p.createdAt)}</td>
+                    <td>
+                      <div className="action-btn-group">
+                        <button className="action-btn delete admin-tooltip" data-tooltip={t('common.delete')} onClick={() => setConfirmAction({ id: p._id, action: 'delete-patient', name: p.name })}>
+                          <Icons.Trash />
+                        </button>
+                      </div>
+                    </td>
                   </motion.tr>
                 ))}
               </tbody>
@@ -936,24 +955,31 @@ const AdminDashboard = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <h4>
-                {confirmAction.action === 'approve' && `✅ ${t('admin.approveHospital')}`}
-                {confirmAction.action === 'reject' && `❌ ${t('admin.rejectHospital')}`}
-                {confirmAction.action === 'delete' && `🗑️ ${t('admin.deleteHospital')}`}
+                {(confirmAction.action === 'approve') && `✅ ${t('admin.approveHospital')}`}
+                {(confirmAction.action === 'reject') && `❌ ${t('admin.rejectHospital')}`}
+                {(confirmAction.action === 'delete') && `🗑️ ${t('admin.deleteHospital')}`}
+                {(confirmAction.action === 'delete-patient') && `🗑️ ${t('admin.deletePatient')}`}
               </h4>
               <p>
-                {t('admin.areYouSureAction', { action: confirmAction.action, name: confirmAction.name })}
-                {confirmAction.action === 'delete' && ` ${t('admin.actionCannotBeUndone')}`}
+                {t('admin.areYouSureAction', { action: confirmAction.action.includes('delete') ? 'delete' : confirmAction.action, name: confirmAction.name })}
+                {confirmAction.action.includes('delete') && ` ${t('admin.actionCannotBeUndone')}`}
               </p>
               <div className="confirm-dialog-actions">
                 <button className="secondary-btn" style={{ padding: '10px 24px', fontSize: '14px' }} onClick={() => setConfirmAction(null)}>{t('common.cancel')}</button>
                 <button
-                  className={`action-btn ${confirmAction.action === 'delete' ? 'reject' : confirmAction.action}`}
+                  className={`action-btn ${confirmAction.action.includes('delete') ? 'reject' : confirmAction.action}`}
                   style={{ padding: '10px 24px', fontSize: '14px' }}
-                  onClick={() => handleHospitalAction(confirmAction.id, confirmAction.action)}
+                  onClick={() => {
+                    if (confirmAction.action === 'delete-patient') {
+                      handlePatientAction(confirmAction.id, 'delete');
+                    } else {
+                      handleHospitalAction(confirmAction.id, confirmAction.action);
+                    }
+                  }}
                 >
                   {confirmAction.action === 'approve' && t('common.approve')}
                   {confirmAction.action === 'reject' && t('common.reject')}
-                  {confirmAction.action === 'delete' && t('common.delete')}
+                  {confirmAction.action.includes('delete') && t('common.delete')}
                 </button>
               </div>
             </motion.div>

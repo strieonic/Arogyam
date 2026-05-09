@@ -354,6 +354,7 @@
     "approveHospital": "Approve Hospital",
     "rejectHospital": "Reject Hospital",
     "deleteHospital": "Delete Hospital",
+    "deletePatient": "Delete Patient",
     "areYouSureAction": "Are you sure you want to {{action}} {{name}}?",
     "actionCannotBeUndone": "This action cannot be undone."
   }

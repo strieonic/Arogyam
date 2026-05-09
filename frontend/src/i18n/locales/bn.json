@@ -361,6 +361,7 @@
     "approveHospital": "হাসপাতাল অনুমোদন করুন",
     "rejectHospital": "হাসপাতাল প্রত্যাখ্যান করুন",
     "deleteHospital": "হাসপাতাল মুছুন",
+    "deletePatient": "???? ?????",
     "areYouSureAction": "আপনি কি নিশ্চিত যে {{name}} কে {{action}} করতে চান?",
     "actionCannotBeUndone": "এই কাজটি আর পূর্বাবস্থায় ফেরানো যাবে না।"
   }

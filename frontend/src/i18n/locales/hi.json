@@ -360,6 +360,7 @@
     "approveHospital": "अस्पताल को स्वीकृत करें",
     "rejectHospital": "अस्पताल को अस्वीकार करें",
     "deleteHospital": "अस्पताल हटाएं",
+    "deletePatient": "????? ?????",
     "areYouSureAction": "क्या आप वाकई {{name}} को {{action}} करना चाहते हैं?",
     "actionCannotBeUndone": "यह कार्रवाई वापस नहीं ली जा सकती।"
   }
