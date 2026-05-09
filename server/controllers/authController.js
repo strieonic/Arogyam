@@ -115,15 +115,17 @@ export const verifyPatientOTP = async (req, res) => {
     patient.otpExpiry = null;
     await patient.save();
 
+    const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
     const token = jwt.sign(
       { id: patient._id, role: "patient" },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: "7d" },
     );
 
     res.json({ message: "Login successful", token, patient });
-  } catch {
-    res.status(500).json({ message: "Login failed" });
+  } catch (error) {
+    console.error("LOGIN VERIFY ERROR:", error);
+    res.status(500).json({ message: "Login failed: " + error.message });
   }
 };
 
@@ -269,9 +271,10 @@ export const loginHospital = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
 
     /* ================= GENERATE TOKEN ================= */
+    const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
     const token = jwt.sign(
       { id: hospital._id, role: "hospital" },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: "7d" },
     );
 

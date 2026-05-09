@@ -61,7 +61,7 @@ export const searchPatient = async (req, res) => {
       // Email
       searchQuery.email = queryStr;
     } else if (queryStr.toUpperCase().startsWith('ARO-')) {
-      // Health ID
+      // Arogyam ID
       searchQuery.healthId = queryStr.toUpperCase();
     } else {
       // Partial Name Search

@@ -27,7 +27,8 @@ export const adminLogin = async (req, res) => {
     }
 
     // create admin JWT
-    const token = jwt.sign({ role: "admin" }, process.env.JWT_SECRET, {
+    const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
+    const token = jwt.sign({ role: "admin" }, secret, {
       expiresIn: "7d",
     });
 
@@ -36,7 +37,8 @@ export const adminLogin = async (req, res) => {
       token,
     });
   } catch (error) {
-    res.status(500).json({ message: "Admin login failed" });
+    console.error("ADMIN LOGIN ERROR:", error);
+    res.status(500).json({ message: "Admin login failed: " + error.message });
   }
 };
 

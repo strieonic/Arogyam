@@ -21,9 +21,10 @@ export const doctorLogin = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, doctor.password);
     if (!isMatch) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
+    const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
     const token = jwt.sign(
       { id: doctor._id, role: "doctor", hospitalId: doctor.hospitalId._id },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: "7d" }
     );
 
@@ -48,9 +49,9 @@ export const setupDoctorAccount = async (req, res, next) => {
     const { token, password } = req.body; // In a real app, token is emailed.
     
     // For this prototype, we'll assume the hospital sends a JWT invite token
-    let decoded;
+    const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, secret);
     } catch (e) {
       return res.status(400).json({ success: false, message: "Invalid or expired invitation link." });
     }
