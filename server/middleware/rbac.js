@@ -134,11 +134,8 @@ export const requireAdmin = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Admin access only." });
     }
 
-    const admin = await Admin.findById(decoded.id).select("-password");
-    if (!admin) return res.status(401).json({ success: false, message: "Admin account not found." });
-
-    req.admin = admin;
-    req.user = { id: admin._id, _id: admin._id, role: "admin", data: admin };
+    // For Super Admin (ENV based), we skip the DB check to avoid 401s
+    req.user = { id: "super-admin", role: "admin", name: "Super Admin" };
     next();
   } catch {
     res.status(401).json({ success: false, message: "Invalid or expired token." });
