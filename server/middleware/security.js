@@ -42,7 +42,7 @@ export const aiSummaryLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hours
   max: 20, // 20 per day per user
   keyGenerator: (req) => req.user?.id || req.ip,
-  validate: { keyGenerator: false },
+  validate: false,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: "Daily medical summary limit reached (20/day)." },
@@ -52,7 +52,7 @@ export const aiOcrLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000,
   max: 50, // 50 per day per hospital
   keyGenerator: (req) => req.user?.id || req.ip,
-  validate: { keyGenerator: false },
+  validate: false,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: "Daily OCR extraction limit reached (50/day)." },
@@ -62,7 +62,7 @@ export const aiSymptomLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000,
   max: 30, // 30 per day per user
   keyGenerator: (req) => req.user?.id || req.ip,
-  validate: { keyGenerator: false },
+  validate: false,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: "Daily symptom checker limit reached (30/day)." },
