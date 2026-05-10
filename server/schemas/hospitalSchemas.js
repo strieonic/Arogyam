@@ -6,8 +6,8 @@ import { z } from "zod";
 export const consentRequestSchema = z.object({
   healthId: z
     .string()
-    .min(3, "Health ID required")
-    .max(30, "Invalid Health ID"),
+    .min(3, "Arogyam ID required")
+    .max(30, "Invalid Arogyam ID"),
   purpose: z
     .string()
     .min(5, "Purpose must be at least 5 characters")
@@ -22,7 +22,7 @@ export const consentRequestSchema = z.object({
 
 /* ── Record Upload ── */
 export const uploadRecordSchema = z.object({
-  healthId: z.string().min(3, "Health ID required"),
+  healthId: z.string().min(3, "Arogyam ID required"),
   recordType: z.enum(
     ["Prescription", "Lab Report", "Imaging", "Discharge Summary", "Vaccination", "Other"],
     { message: "Invalid record type" }
@@ -33,5 +33,5 @@ export const uploadRecordSchema = z.object({
 
 /* ── Search Patient ── */
 export const searchPatientSchema = z.object({
-  healthId: z.string().min(1, "Health ID is required").max(30),
+  healthId: z.string().min(1, "Arogyam ID is required").max(30),
 });
