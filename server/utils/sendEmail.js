@@ -33,10 +33,10 @@ const sendEmail = async (to, subject, html) => {
   try {
     console.log(`📧 Attempting to send email to: ${to} from: ${sender}`);
     const info = await transporter.sendMail({
-      from: `"Arogyam" <${sender}>`,
+      from: sender,
       to,
-      bcc: sender, // 🔥 Send a copy to self to verify it left the system
       subject,
+      text: html.replace(/<[^>]*>/g, ''), // Plain text fallback
       html,
     });
 
