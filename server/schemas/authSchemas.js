@@ -35,12 +35,12 @@ export const patientRegisterSchema = z.object({
 
 /* ── Patient OTP send ── */
 export const sendOtpSchema = z.object({
-  phone: phone,
+  identifier: z.string().min(1, "Identifier is required"),
 });
 
 /* ── Patient OTP verify ── */
 export const verifyOtpSchema = z.object({
-  phone: phone,
+  identifier: z.string().min(1, "Identifier is required"),
   otp: z
     .string()
     .length(6, "OTP must be exactly 6 digits")
@@ -65,6 +65,6 @@ export const hospitalLoginSchema = z.object({
 
 /* ── Admin Login ── */
 export const adminLoginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
