@@ -2,20 +2,22 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+let transporter = null;
 
-transporter
-  .verify()
-  .then(() => console.log("SMTP READY"))
-  .catch((err) => console.log("SMTP ERROR:", err));
+const getTransporter = () => {
+  if (transporter) return transporter;
+  
+  transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+  return transporter;
+};
 
 const sendEmail = async (to, subject, html) => {
   const sender = process.env.EMAIL_USER || "aarogyamhealthapp2026@gmail.com";
@@ -32,7 +34,7 @@ const sendEmail = async (to, subject, html) => {
 
   try {
     console.log(`📧 Attempting to send email to: ${to} from: ${sender}`);
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: sender,
       to,
       subject,
