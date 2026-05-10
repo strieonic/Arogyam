@@ -15,6 +15,7 @@ export const generalLimiter = rateLimit({
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: false,
   message: { success: false, message: "Too many requests. Please try again later." },
 });
 
@@ -24,6 +25,7 @@ export const authLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: false,
   message: { success: false, message: "Too many auth attempts. Please wait 15 minutes." },
   skipSuccessfulRequests: true, // only count failed attempts
 });
@@ -34,6 +36,7 @@ export const otpLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: false,
   message: { success: false, message: "Too many OTP requests. Please wait 10 minutes." },
 });
 
