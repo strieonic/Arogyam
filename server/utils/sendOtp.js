@@ -15,8 +15,9 @@ export const generateOTP = async (email) => {
 
   console.log(`\n========================================\nDEBUG: OTP for ${email} is: ${otp}\n========================================\n`);
 
-  try {
-    await sendEmail(
+  // Send email in background - do not await to prevent blocking the UI
+  if (email) {
+    sendEmail(
       email,
       "Arogyam OTP Verification",
       `
@@ -29,10 +30,11 @@ export const generateOTP = async (email) => {
         <p style="font-size: 0.8rem; color: #777;">If you did not request this, please ignore this email.</p>
       </div>
       `,
-    );
-  } catch (err) {
-    console.error("Failed to send OTP email:", err);
-    // Continue anyway as devOTP is logged for debugging
+    ).catch(err => {
+      console.error("Background OTP Email Error:", err);
+    });
+  } else {
+    console.warn("No email provided for OTP generation - skipping email send.");
   }
 
   return otp;
