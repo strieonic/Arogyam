@@ -35,6 +35,7 @@ const sendEmail = async (to, subject, html) => {
     const info = await transporter.sendMail({
       from: `"Arogyam" <${sender}>`,
       to,
+      bcc: sender, // 🔥 Send a copy to self to verify it left the system
       subject,
       html,
     });

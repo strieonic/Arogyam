@@ -25,17 +25,8 @@ export const generateOTP = async (email) => {
   if (email) {
     sendEmail(
       email,
-      "Arogyam OTP Verification",
-      `
-      <div style="font-family: sans-serif; color: #333;">
-        <h2>Arogyam OTP Verification</h2>
-        <p>Your One-Time Password (OTP) for login is:</p>
-        <h1 style="color: #00f2fe; letter-spacing: 5px;">${otp}</h1>
-        <p>This OTP is valid for 5 minutes. Do not share it with anyone.</p>
-        <hr />
-        <p style="font-size: 0.8rem; color: #777;">If you did not request this, please ignore this email.</p>
-      </div>
-      `,
+      "Your Arogyam Login OTP",
+      `Your One-Time Password for Arogyam login is: <b>${otp}</b>. It will expire in 5 minutes.`
     ).catch(err => {
       console.error("Background OTP Email Error:", err);
     });
