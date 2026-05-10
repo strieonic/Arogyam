@@ -18,22 +18,36 @@ transporter
   .catch((err) => console.log("SMTP ERROR:", err));
 
 const sendEmail = async (to, subject, html) => {
+  const sender = process.env.EMAIL_USER || "aarogyamhealthapp2026@gmail.com";
+  
   if (process.env.ENABLE_EMAILS === "false") {
-    console.log("📧 Email sending is disabled via ENABLE_EMAILS flag.");
-    return true; // Return true to avoid breaking flows that depend on email success
+    console.log(`📧 Email disabled. Would have sent to: ${to}`);
+    return true;
   }
+
+  if (!to) {
+    console.error("❌ Email Error: No recipient address provided.");
+    return false;
+  }
+
   try {
+    console.log(`📧 Attempting to send email to: ${to} from: ${sender}`);
     const info = await transporter.sendMail({
-      from: `"Arogyam" <${process.env.EMAIL_USER}>`,
+      from: `"Arogyam" <${sender}>`,
       to,
       subject,
       html,
     });
 
-    console.log("Email Sent:", info.messageId);
+    console.log("✅ Email Sent Successfully:", info.messageId);
     return true;
   } catch (error) {
-    console.error("Email Error:", error);
+    console.error("🔥 Detailed Email Error:", {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      recipient: to
+    });
     return false;
   }
 };

@@ -13,7 +13,13 @@ export const generateOTP = async (email) => {
     lowerCaseAlphabets: false,
   });
 
-  console.log(`\n========================================\nDEBUG: OTP for ${email} is: ${otp}\n========================================\n`);
+  console.log(`
+  **************************************************
+  🔑 OTP GENERATED: ${otp}
+  📧 RECIPIENT: ${email}
+  ⏰ TIME: ${new Date().toISOString()}
+  **************************************************
+  `);
 
   // Send email in background - do not await to prevent blocking the UI
   if (email) {
