@@ -11,7 +11,6 @@ const PatientLogin = () => {
   const { t } = useTranslation();
   const [identifier, setIdentifier] = useState('');
   const [otp, setOtp] = useState('');
-  const [devOTP, setDevOTP] = useState('');
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,8 +22,7 @@ const PatientLogin = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await sendOTP(identifier);
-      setDevOTP(res.data.devOTP || '');
+      await sendOTP(identifier);
       setStep(2);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send OTP');
@@ -85,12 +83,7 @@ const PatientLogin = () => {
           </form>
         ) : (
           <form onSubmit={handleVerifyOTP} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {devOTP && (
-              <div style={{ background: 'rgba(0, 242, 254, 0.1)', border: '1px solid rgba(0, 242, 254, 0.3)', borderRadius: '8px', padding: '1rem', textAlign: 'center' }}>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{t('patient.devModeOtp')}</p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', letterSpacing: '4px', color: 'var(--secondary-color)' }}>{devOTP}</p>
-              </div>
-            )}
+
             <div className="input-group">
               <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{t('patient.enterOtp')}</label>
               <div style={{ position: 'relative', marginTop: '0.5rem' }}>

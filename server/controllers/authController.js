@@ -85,7 +85,7 @@ export const sendPatientOTP = async (req, res) => {
     patient.otpExpiry = Date.now() + 5 * 60 * 1000;
     await patient.save();
 
-    res.json({ message: "OTP sent successfully", devOTP: otp });
+    res.json({ message: "OTP sent successfully" });
   } catch (error) {
     console.error("OTP ERROR:", error);
     res.status(500).json({ message: "OTP sending failed" });
