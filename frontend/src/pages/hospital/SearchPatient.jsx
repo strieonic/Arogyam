@@ -1,9 +1,9 @@
-// src/pages/hospital/SearchPatient.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../../api/axios';
+import { toast } from 'sonner';
 import { FaSearch, FaUser, FaClock, FaCalendarPlus, FaFileUpload, FaHistory, FaPhoneAlt, FaTint } from 'react-icons/fa';
 
 const SearchPatient = () => {
@@ -76,7 +76,7 @@ const SearchPatient = () => {
             <input 
               type="text" 
               className="form-input pl-12 w-full !bg-white/5" 
-              placeholder="e.g. Rahul, 9876543210, ARO-1234, rahul@email.com"
+              placeholder="e.g. Rahul, 9876543210, HID-1234, rahul@email.com"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -165,7 +165,7 @@ const SearchPatient = () => {
               </button>
 
               <button 
-                onClick={() => alert("Book appointment feature coming soon")}
+                onClick={() => toast.info('Appointment booking coming soon!', { description: 'This feature is under development.' })}
                 className="primary-btn !bg-blue-600 hover:!bg-blue-500 !py-2 !px-3 text-xs w-full justify-center flex items-center gap-2"
               >
                 <FaCalendarPlus /> Book Appt

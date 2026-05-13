@@ -95,11 +95,11 @@ const ActionTile = ({ action, index }) => {
       <div className="flex-shrink-0 rounded-full p-4 mb-0" style={{ background: action.bg }}>
         <Icon style={{ fontSize: isWide ? '2rem' : '2.5rem', color: action.color }} />
       </div>
-      <div className={isWide ? '' : 'mt-3'}>
-        <h3 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>
+      <div className={isWide ? 'min-w-0' : 'mt-3 w-full'}>
+        <h3 className="font-bold text-base line-clamp-1" style={{ color: 'var(--text-primary)' }}>
           {t(action.titleKey, action.name)}
         </h3>
-        <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-xs mt-1 text-secondary opacity-80 line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
           {t(action.descKey, '')}
         </p>
       </div>

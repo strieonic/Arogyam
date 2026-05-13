@@ -7,6 +7,7 @@ import Doctor from "../models/Doctor.js";
 import Appointment from "../models/Appointment.js";
 import Prescription from "../models/Prescription.js";
 import Notification from "../models/Notification.js";
+import Complaint from "../models/Complaint.js";
 import { sendHospitalVerificationEmail } from "../services/emailService.js";
 import jwt from "jsonwebtoken";
 
@@ -28,7 +29,7 @@ export const adminLogin = async (req, res) => {
 
     // create admin JWT
     const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
-    const token = jwt.sign({ role: "admin" }, secret, {
+    const token = jwt.sign({ id: "super-admin", role: "admin" }, secret, {
       expiresIn: "7d",
     });
 
@@ -251,7 +252,7 @@ export const getAdminStats = async (req, res) => {
     const totalDoctors = await Doctor.countDocuments();
     const totalAppointments = await Appointment.countDocuments();
     const totalPrescriptions = await Prescription.countDocuments();
-    const complaintsOpen = 0; // Mock until Complaint system is built
+    const complaintsOpen = await Complaint.countDocuments({ status: "open" });
 
     const approvedConsents = await Consent.countDocuments({ status: "approved" });
     const pendingConsents = await Consent.countDocuments({ status: "pending" });

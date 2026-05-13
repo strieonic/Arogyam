@@ -24,8 +24,10 @@ const email = z.string().email("Invalid email address");
 export const patientRegisterSchema = z.object({
   name: name,
   phone: phone,
+  email: email,
   dob: z.string().min(1, "Date of birth is required"),
   gender: z.enum(["Male", "Female", "Other"], { message: "Gender must be Male, Female, or Other" }),
+  aadhaar: z.string().regex(/^\d{12}$/, "Must be a 12-digit Aadhaar number").optional().or(z.literal('')),
   bloodGroup: z
     .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
     .optional(),

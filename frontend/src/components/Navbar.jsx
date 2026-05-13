@@ -9,7 +9,7 @@ import './Navbar.css';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
-  const { user, role, logout } = useAuth();
+  const { user, role, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,7 +17,7 @@ const Navbar = () => {
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'dark');
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef(null);
-  const isAdmin = localStorage.getItem('adminAuth') === 'true';
+  // Removed static localStorage check for isAdmin to use AuthContext reactive state
   const isOnAdminPage = location.pathname.startsWith('/admin');
   const isLanding = location.pathname === '/';
 
@@ -48,16 +48,15 @@ const Navbar = () => {
 
   const handleLogout = useCallback(() => {
     logout();
-    localStorage.removeItem('adminAuth');
     navigate('/');
     setMenuOpen(false);
   }, [logout, navigate]);
 
   const handleAdminLogout = useCallback(() => {
-    localStorage.removeItem('adminAuth');
+    logout();
     navigate('/');
     setMenuOpen(false);
-  }, [navigate]);
+  }, [logout, navigate]);
 
   const closeMenu = () => setMenuOpen(false);
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminLogin = () => {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { adminLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,13 +21,12 @@ const AdminLogin = () => {
 
     try {
       const res = await api.post('/admin/login', { email, password });
-      localStorage.setItem('adminAuth', 'true');
-      localStorage.setItem('adminToken', res.data.token);
+      adminLogin(res.data.token);
       navigate('/admin/dashboard');
     } catch (err) {
       // Fallback: hardcoded credentials for offline dev
       if (email === 'admin@arogyam.com' && password === 'admin123') {
-        localStorage.setItem('adminAuth', 'true');
+        adminLogin('mock-token-dev');
         navigate('/admin/dashboard');
       } else {
         setError(err.response?.data?.message || 'Invalid admin credentials');

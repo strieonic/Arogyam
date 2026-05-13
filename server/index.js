@@ -100,6 +100,7 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+app.use("/uploads", express.static("uploads"));
 
 /* ======================================================
    GLOBAL RATE LIMITER — 100 req / 15 min per IP

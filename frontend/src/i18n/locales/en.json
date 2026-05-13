@@ -28,10 +28,12 @@
     "rejected": "Rejected",
     "madeInIndia": "🇮🇳 Made in India",
     "scroll": "Scroll",
-    "switchToLight": "Switch to Light Mode",
-    "switchToDark": "Switch to Dark Mode",
     "selectLanguage": "Language",
-    "doctorPortal": "Doctor Portal"
+    "doctorPortal": "Doctor Portal",
+    "support": "Support",
+    "symptomChecker": "Symptom Checker",
+    "switchToLight": "Switch to Light Mode",
+    "switchToDark": "Switch to Dark Mode"
   },
   "nav": {
     "login": "Login",
@@ -257,7 +259,9 @@
     "Arogyam": "Arogyam ID:",
     "lastVisit": "Last Visit:",
     "uploadedRecordsTitle": "Uploaded Records History",
-    "noRecordsUploaded": "You have not uploaded any medical records yet."
+    "noRecordsUploaded": "You have not uploaded any medical records yet.",
+    "support": "Hospital Support",
+    "manageDoctors": "Manage Doctors"
   },
   "admin": {
     "loginTitle": "Admin Access",
@@ -357,6 +361,15 @@
     "deleteHospital": "Delete Hospital",
     "deletePatient": "Delete Patient",
     "areYouSureAction": "Are you sure you want to {{action}} {{name}}?",
-    "actionCannotBeUndone": "This action cannot be undone."
+    "actionCannotBeUndone": "This action cannot be undone.",
+    "supportTickets": "Support Tickets",
+    "medicalTimeline": "Medical Timeline",
+    "viewHistory": "View your medical history",
+    "appointments": "Appointments",
+    "bookAppointments": "Book & manage appointments",
+    "reminders": "Reminders",
+    "medicineSchedule": "Medicine & health schedule",
+    "medicalProfile": "Medical Profile",
+    "allergiesContacts": "Allergies & emergency contacts"
   }
 }

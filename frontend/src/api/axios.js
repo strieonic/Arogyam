@@ -11,7 +11,7 @@ api.interceptors.request.use(
     if (isPublicRoute) return config;
 
     const isAdminRoute = config.url.startsWith('/admin');
-    const token = isAdminRoute ? localStorage.getItem('adminToken') : localStorage.getItem('token');
+    const token = isAdminRoute ? sessionStorage.getItem('adminToken') : sessionStorage.getItem('token');
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

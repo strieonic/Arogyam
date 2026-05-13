@@ -1,5 +1,5 @@
 // src/services/reminderService.js
-import api from './api';
+import api from '../api/axios';
 
 export const getReminders   = ()          => api.get('/reminders');
 export const addReminder    = (data)      => api.post('/reminders', data);

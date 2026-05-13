@@ -1,4 +1,4 @@
-import api from "./api";
+import api from '../api/axios';
 
 // Use FormData for creating a complaint with file attachments
 export const createComplaint = (formData) => api.post("/complaints", formData, {

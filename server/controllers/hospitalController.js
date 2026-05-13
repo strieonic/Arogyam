@@ -35,7 +35,7 @@ export const searchPatient = async (req, res) => {
 
     // 1️⃣ Find all authorized patient IDs for this hospital
     const [consents, appointments, hospitalPatients] = await Promise.all([
-      Consent.find({ hospitalId, status: "GRANTED" }).select("patientId"),
+      Consent.find({ hospitalId, status: "approved" }).select("patientId"),
       Appointment.find({ hospital: hospitalId }).select("patient"),
       HospitalPatient.find({ hospitalId }).select("patientId")
     ]);
@@ -60,8 +60,8 @@ export const searchPatient = async (req, res) => {
     } else if (queryStr.includes('@')) {
       // Email
       searchQuery.email = queryStr;
-    } else if (queryStr.toUpperCase().startsWith('ARO-')) {
-      // Arogyam ID
+    } else if (queryStr.toUpperCase().startsWith('HID')) {
+      // Arogyam ID (Standardized prefix)
       searchQuery.healthId = queryStr.toUpperCase();
     } else {
       // Partial Name Search

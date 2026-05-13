@@ -354,7 +354,7 @@ button {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  padding: var(--space-xl);
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
   transition: var(--transition);
 }
 
@@ -489,7 +489,7 @@ input[type="file"].glass-input::file-selector-button:hover {
 .bento-wrapper {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(180px, auto);
+  grid-auto-rows: minmax(160px, auto);
   gap: var(--space-lg);
   width: 100%;
 }
@@ -498,11 +498,13 @@ input[type="file"].glass-input::file-selector-button:hover {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
-  padding: var(--space-xl);
+  padding: var(--space-lg);
   transition: var(--transition);
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
 }
 
 .bento-tile:hover {

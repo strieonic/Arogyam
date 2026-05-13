@@ -69,11 +69,34 @@ const PatientRegister = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div className="input-group">
+              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Date of Birth</label>
+              <input 
+                type="date" 
+                name="dob" 
+                className="glass-input mt-2" 
+                required 
+                onChange={handleChange} 
+                max={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="input-group">
+              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Gender</label>
+              <select name="gender" className="glass-input mt-2" required onChange={handleChange} style={{ padding: '0.8rem' }}>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
           <div className="input-group">
             <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{t('patient.aadhaarOptional')}</label>
             <div style={{ position: 'relative', marginTop: '0.5rem' }}>
               <FaIdCard style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
-              <input type="text" name="aadhaar" className="glass-input" style={{ paddingLeft: '45px' }} placeholder={t('patient.aadhaarPlaceholder')} onChange={handleChange} />
+              <input type="text" name="aadhaar" className="glass-input" style={{ paddingLeft: '45px' }} placeholder={t('patient.aadhaarPlaceholder')} onChange={handleChange} maxLength={12} />
             </div>
           </div>
 

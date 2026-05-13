@@ -2,6 +2,9 @@ import MedicalRecord from "../models/MedicalRecord.js";
 import Patient from "../models/Patient.js";
 import Consent from "../models/Consent.js";
 import { uploadBufferToCloudinary } from "../middleware/uploadMiddleware.js";
+import { extractTextFromPDF } from "../utils/ocrScan.js";
+import fs from "fs";
+import path from "path";
 
 /* =========================
    UPLOAD RECORD (SECURE FIXED)
@@ -46,13 +49,31 @@ export const uploadRecord = async (req, res) => {
       "arogyam/records",
     );
 
+    // 📄 Extract text for AI analysis later
+    let extractedText = "";
+    if (recordType.toLowerCase().includes("report") || recordType.toLowerCase().includes("lab")) {
+      try {
+        // Save temp file for pdf-parse if buffer is not enough or use buffer directly
+        const tempPath = path.join("uploads", `temp-${Date.now()}.pdf`);
+        if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
+        fs.writeFileSync(tempPath, req.file.buffer);
+        
+        extractedText = await extractTextFromPDF(tempPath);
+        
+        // Clean up temp file
+        fs.unlinkSync(tempPath);
+      } catch (ocrErr) {
+        console.log("OCR EXTRACTION FAILED:", ocrErr.message);
+      }
+    }
+
     const record = await MedicalRecord.create({
       patient: patient._id,
       hospital: req.hospital._id,
       recordType,
       fileUrl: uploadResult.secure_url,
       notes,
-      extractedText: "",
+      extractedText: extractedText || "",
       aiSummary: "",
     });
 

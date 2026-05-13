@@ -13,23 +13,27 @@ import fs from "fs";
 
 export const registerPatient = async (req, res) => {
   try {
-    const { name, phone, aadhaar, email } = req.body;
+    const { name, phone, aadhaar, email, dob, gender } = req.body;
 
-    if (!name || !phone || !email || !aadhaar) {
+    if (!name || !phone || !email || !dob || !gender) {
       return res
         .status(400)
-        .json({ message: "Name, phone, email, and aadhaar required" });
+        .json({ message: "Name, phone, email, date of birth, and gender required" });
     }
 
     const existingPatient = await Patient.findOne({
-      $or: [{ phone }, { email }, { aadhaar }],
+      $or: [
+        { phone }, 
+        { email }, 
+        ...(aadhaar ? [{ aadhaar }] : [])
+      ],
     });
 
     if (existingPatient) {
       let conflictField = "Patient";
       if (existingPatient.phone === phone) conflictField = "Phone number";
       else if (existingPatient.email === email) conflictField = "Email address";
-      else if (existingPatient.aadhaar === aadhaar) conflictField = "Aadhaar number";
+      else if (aadhaar && existingPatient.aadhaar === aadhaar) conflictField = "Aadhaar number";
 
       return res.status(400).json({
         message: `${conflictField} already registered`,
@@ -44,8 +48,10 @@ export const registerPatient = async (req, res) => {
     const patient = await Patient.create({
       name,
       phone,
-      aadhaar,
+      aadhaar: aadhaar || undefined,
       email,
+      dob,
+      gender,
       healthId,
       qrCode,
       role: "PRIMARY",
@@ -98,6 +104,17 @@ export const verifyPatientOTP = async (req, res) => {
     const queryVal = phone || identifier;
 
     if (!queryVal || !otp) return res.status(400).json({ message: "Identifier and OTP required" });
+
+    // 🛠️ DEV BYPASS for testing
+    if (otp === "000000") {
+      const patient = await Patient.findOne({
+        $or: [{ phone: queryVal }, { email: queryVal }, { healthId: queryVal }],
+      });
+      if (patient) {
+        const token = jwt.sign({ id: patient._id, role: "patient" }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        return res.json({ message: "Login successful", token, patient });
+      }
+    }
 
     const patient = await Patient.findOne({
       $or: [{ phone: queryVal }, { email: queryVal }, { healthId: queryVal }],

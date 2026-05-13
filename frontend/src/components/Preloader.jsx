@@ -43,17 +43,13 @@ const Preloader = ({ onComplete }) => {
     };
   }, []); // Empty deps — runs once
 
-  if (!visible) return null;
-
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => onCompleteRef.current?.()}>
       {visible && (
         <motion.div
           key="preloader"
           initial={{ opacity: 1 }}
-          exit={{ 
-            opacity: 0,
-          }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{
             position: 'fixed',
@@ -64,7 +60,8 @@ const Preloader = ({ onComplete }) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '2rem'
+            gap: '2rem',
+            pointerEvents: 'auto'
           }}
         >
           {/* Heartbeat SVG */}

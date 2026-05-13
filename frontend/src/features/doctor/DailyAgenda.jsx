@@ -107,7 +107,7 @@ const DailyAgenda = () => {
                 {appt.status !== 'completed' && appt.status !== 'cancelled' && (
                   <>
                     <button className="secondary-btn !py-2 !px-3 text-xs flex items-center gap-1"
-                      onClick={() => alert("Timeline / Medical History viewer to be implemented")}>
+                      onClick={() => toast.info('Medical history viewer coming soon!')}>
                       <FaNotesMedical /> History
                     </button>
                     <button className="primary-btn !bg-green-600 hover:!bg-green-500 !py-2 !px-3 text-xs flex items-center gap-1"

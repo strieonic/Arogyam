@@ -75,8 +75,9 @@ const ProtectedDoctorRoute = ({ children }) => {
 
 
 const ProtectedAdminRoute = ({ children }) => {
-  const isAdmin = localStorage.getItem('adminAuth') === 'true';
-  if (!isAdmin) return <Navigate to="/admin/login" />;
+  const { isAdmin } = useAuth();
+  const sessionAdmin = sessionStorage.getItem('adminAuth') === 'true';
+  if (!isAdmin && !sessionAdmin) return <Navigate to="/admin/login" />;
   return children;
 };
 
@@ -84,7 +85,9 @@ const ProtectedAdminRoute = ({ children }) => {
 const MainLayout = ({ children }) => {
   const location = useLocation();
   const isLanding = location.pathname === '/';
-  const isAdmin = location.pathname.startsWith('/admin/dashboard');
+  const { isAdmin: authIsAdmin } = useAuth();
+  const isAdminPath = location.pathname.startsWith('/admin/dashboard');
+  const isAdmin = authIsAdmin || isAdminPath;
 
   const layoutClass = isLanding ? 'full-bleed' : isAdmin ? 'admin-bleed' : 'constrained';
 
@@ -101,11 +104,8 @@ function AppInner() {
 
   return (
     <>
-      <Preloader onComplete={() => setPreloaderDone(true)} />
+      {!preloaderDone && <Preloader onComplete={() => setPreloaderDone(true)} />}
 
-      <ScrollProgress />
-      <div className="grain-overlay" aria-hidden="true" />
-      
       <div className="app-container">
         <Navbar />
         <MainLayout>
@@ -158,6 +158,9 @@ function AppInner() {
           </AnimatePresence>
         </MainLayout>
       </div>
+
+      <ScrollProgress />
+      <div className="grain-overlay" aria-hidden="true" style={{ pointerEvents: 'none' }} />
     </>
   );
 }

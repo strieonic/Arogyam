@@ -31,7 +31,7 @@ const hospitalSchema = new mongoose.Schema(
 
     verificationNotes: String,
     verifiedAt: Date,
-    verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    verifiedBy: { type: String },
     rejectionReason: String,
     submittedDocuments: [String],
 

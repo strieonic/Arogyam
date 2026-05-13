@@ -216,7 +216,7 @@
 /* ── Stat Cards Grid ── */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-lg);
   margin-bottom: var(--space-2xl);
 }
@@ -416,7 +416,7 @@
 
 .admin-table th {
   text-align: left;
-  padding: 14px var(--space-xl);
+  padding: 12px var(--space-md);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -427,11 +427,15 @@
 }
 
 .admin-table td {
-  padding: 16px var(--space-xl);
+  padding: 14px var(--space-md);
   font-size: var(--text-sm);
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-table tbody tr {

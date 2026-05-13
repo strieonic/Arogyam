@@ -170,10 +170,18 @@ const MyRecords = () => {
                         href={fileUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="w-8 h-8 rounded-lg bg-white/5 text-[var(--text-secondary)] flex items-center justify-center hover:bg-white/10 hover:text-white transition-colors border border-white/10"
+                        className="w-8 h-8 rounded-lg bg-white/5 text-[var(--text-secondary)] flex items-center justify-center hover:bg-[var(--accent-primary)]/20 hover:text-[var(--accent-primary)] transition-colors border border-white/10"
                         title="View Document"
                       >
                         <FaExternalLinkAlt className="text-xs" />
+                      </a>
+                      <a 
+                        href={fileUrl.includes('/upload/') ? fileUrl.replace('/upload/', '/upload/fl_attachment/') : fileUrl} 
+                        download
+                        className="w-8 h-8 rounded-lg bg-white/5 text-[var(--text-secondary)] flex items-center justify-center hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors border border-white/10"
+                        title="Download PDF"
+                      >
+                        <FaDownload className="text-xs" />
                       </a>
                     </div>
                   </div>

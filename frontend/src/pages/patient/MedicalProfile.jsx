@@ -21,13 +21,14 @@ const MedicalProfile = () => {
   const fetchProfile = async () => {
     try {
       const res = await api.get('/patient/profile');
+      const profile = res.data;
       setFormData({
-        bloodGroup: res.data.bloodGroup || '',
-        allergies: res.data.allergies || '',
-        emergencyContact: res.data.emergencyContact || '',
-        address: res.data.address || '',
-        phone: res.data.phone || '',
-        aadhaar: res.data.aadhaar || ''
+        bloodGroup: profile.bloodGroup || '',
+        allergies: Array.isArray(profile.allergies) ? profile.allergies.join(', ') : (profile.allergies || ''),
+        emergencyContact: profile.emergencyContact?.name ? `${profile.emergencyContact.name}${profile.emergencyContact.phone ? ' - ' + profile.emergencyContact.phone : ''}` : (profile.emergencyContact || ''),
+        address: profile.address || '',
+        phone: profile.phone || '',
+        aadhaar: profile.aadhaar || ''
       });
     } catch (err) {
       toast.error('Failed to load profile');
@@ -48,10 +49,22 @@ const MedicalProfile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.put('/patient/profile/update-medical', formData);
+      // Structure data for backend (allergies to array, emergencyContact to object)
+      const submissionData = {
+        ...formData,
+        allergies: formData.allergies ? formData.allergies.split(',').map(s => s.trim()) : [],
+        emergencyContact: {
+          phone: formData.emergencyContact,
+          name: 'Primary Emergency Contact',
+          relation: 'Contact'
+        }
+      };
+      
+      await api.put('/patient/profile/update-medical', submissionData);
       toast.success('Medical profile updated successfully');
     } catch (err) {
-      toast.error('Failed to update medical profile');
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Failed to update medical profile');
     } finally {
       setSaving(false);
     }

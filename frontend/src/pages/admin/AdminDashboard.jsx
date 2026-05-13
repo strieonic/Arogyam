@@ -4,11 +4,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../context/AuthContext';
+import { toast } from 'sonner';
 
 // Services (no direct axios in components)
 import {
   getAdminStats, getAllHospitals, getHospitalById,
-  approveHospital, rejectHospital, deleteHospital,
+  approveHospital, rejectHospital, suspendHospital, deleteHospital,
   getAllPatients, deletePatient,
   getAllRecords, getAllConsents,
 } from '../../services/adminService';
@@ -31,7 +33,7 @@ const NAV_ITEMS = [
   { key: 'patients',  labelKey: 'admin.patientsLabel',  icon: Icons.Patient,   sectionKey: 'admin.sectionManagement' },
   { key: 'records',   labelKey: 'admin.recordsLabel',   icon: Icons.Record,    sectionKey: 'admin.sectionData' },
   { key: 'consents',  labelKey: 'admin.consentsLabel',  icon: Icons.Consent,   sectionKey: 'admin.sectionData' },
-  { key: 'support',   labelKey: 'Support Tickets',      icon: Icons.Hospital,  sectionKey: 'admin.sectionManagement' },
+  { key: 'support',   labelKey: 'Support Tickets',      icon: Icons.Consent,   sectionKey: 'admin.sectionManagement' },
 ];
 
 const AdminDashboard = () => {
@@ -81,12 +83,13 @@ const AdminDashboard = () => {
       else if (action === 'reject') await rejectHospital(id, actionReason);
       else if (action === 'suspend') await suspendHospital(id, actionReason);
       else if (action === 'delete') await deleteHospital(id);
+      toast.success(`Hospital ${action}d successfully.`);
       setConfirmAction(null);
       setActionReason('');
       setSelectedHospital(null);
       await Promise.all([fetchHospitals(), fetchStats()]);
-    } catch {
-      alert(t('admin.actionFailed'));
+    } catch (err) {
+      toast.error(err?.response?.data?.message || t('admin.actionFailed'));
     }
   };
 
@@ -94,10 +97,11 @@ const AdminDashboard = () => {
   const handlePatientAction = async (id) => {
     try {
       await deletePatient(id);
+      toast.success('Patient deleted successfully.');
       setConfirmAction(null);
       await Promise.all([fetchPatients(), fetchStats()]);
-    } catch {
-      alert(t('admin.actionFailed'));
+    } catch (err) {
+      toast.error(err?.response?.data?.message || t('admin.actionFailed'));
     }
   };
 
@@ -119,9 +123,10 @@ const AdminDashboard = () => {
     setSidebarOpen(false);
   };
 
+  const { logout } = useAuth();
+
   const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
-    localStorage.removeItem('adminToken');
+    logout();
     navigate('/');
   };
 
@@ -342,6 +347,7 @@ const AdminDashboard = () => {
                 >
                   {confirmAction.action === 'approve'                 && t('common.approve')}
                   {confirmAction.action === 'reject'                  && t('common.reject')}
+                  {confirmAction.action === 'suspend'                 && 'Suspend'}
                   {confirmAction.action.includes('delete')            && t('common.delete')}
                 </button>
               </div>

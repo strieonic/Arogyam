@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const replySchema = new mongoose.Schema({
   sender: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
   },
   senderModel: {
@@ -91,7 +91,7 @@ const complaintSchema = new mongoose.Schema(
       type: String,
     },
     assignedAdmin: {
-      type: mongoose.Schema.Types.ObjectId, // Future proofing
+      type: String, // Future proofing
       default: null,
     },
     resolvedAt: {

@@ -14,6 +14,11 @@ import {
   getProfileCompletion,
 } from "../controllers/patientController.js";
 
+import {
+  approveConsentByPatient,
+  rejectConsentByPatient,
+} from "../controllers/consentController.js";
+
 import { requirePatient } from "../middleware/rbac.js";
 import { validate } from "../middleware/validate.js";
 import {
@@ -40,6 +45,8 @@ router.put("/family/:memberId/medical", validate(updateMedicalSchema), updateFam
 /* ── Records & Consents ── */
 router.get("/records", getMyRecords);
 router.get("/consents", getMyConsents);
+router.post("/consents/approve", approveConsentByPatient);
+router.post("/consents/reject", rejectConsentByPatient);
 
 /* ── Timeline (merged events) ── */
 router.get("/timeline", getTimeline);

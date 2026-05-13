@@ -95,7 +95,7 @@ const AdminAnalytics = ({ stats, onNavigate }) => {
           <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
             <Icons.ArrowUp /> Monthly Registrations
           </h3>
-          <div style={{ height: 300, width: '100%' }}>
+          <div style={{ height: 300, width: '100%', minWidth: 0 }}>
             <ResponsiveContainer>
               <BarChart data={stats.charts?.monthlyRegistrations || []}>
                 <XAxis dataKey="month" stroke="rgba(255,255,255,0.4)" fontSize={12} tickLine={false} axisLine={false} />
@@ -115,7 +115,7 @@ const AdminAnalytics = ({ stats, onNavigate }) => {
           <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
             <FaCalendarCheck className="text-indigo-400" /> Daily Appointments
           </h3>
-          <div style={{ height: 300, width: '100%' }}>
+          <div style={{ height: 300, width: '100%', minWidth: 0 }}>
             <ResponsiveContainer>
               <LineChart data={stats.charts?.dailyAppointments || []}>
                 <XAxis dataKey="date" stroke="rgba(255,255,255,0.4)" fontSize={12} tickLine={false} axisLine={false} 
@@ -156,7 +156,7 @@ const AdminAnalytics = ({ stats, onNavigate }) => {
             </div>
           </div>
           
-          <div style={{ height: 250, width: 250 }}>
+          <div style={{ height: 250, width: 250, minWidth: 0 }}>
             <ResponsiveContainer>
               <PieChart>
                 <Pie

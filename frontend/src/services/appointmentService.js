@@ -1,5 +1,5 @@
 // src/services/appointmentService.js
-import api from './api';
+import api from '../api/axios';
 
 /* ── Patient ── */
 export const getApprovedHospitals  = ()          => api.get('/appointments/hospitals');
