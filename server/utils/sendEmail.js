@@ -13,6 +13,11 @@ const getTransporter = () => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    // 🔥 FIX: Force IPv4 and add timeouts to avoid hangs and ENETUNREACH errors on cloud environments (like Render)
+    family: 4,
+    connectionTimeout: 5000, // 5 seconds
+    greetingTimeout: 5000,
+    socketTimeout: 5000,
   });
   return transporter;
 };
