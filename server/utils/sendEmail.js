@@ -1,32 +1,10 @@
-import nodemailer from "nodemailer";
+import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
-let transporter = null;
-
-const getTransporter = () => {
-  if (transporter) return transporter;
-
-  // Use explicit host settings with family: 4 to resolve DNS/IPv6 issues on Render
-  transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // Use STARTTLS for 587
-    requireTLS: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    family: 4, // Force IPv4 to avoid ENETUNREACH errors on cloud hosts
-    connectionTimeout: 5000, // 5 seconds
-    greetingTimeout: 5000,
-    socketTimeout: 5000,
-  });
-  return transporter;
-};
-
 const sendEmail = async (to, subject, html) => {
-  const sender = process.env.EMAIL_USER || "aarogyamhealthapp2026@gmail.com";
+  const senderEmail = process.env.EMAIL_USER || "aarogyamhealthapp2026@gmail.com";
+  const apiKey = process.env.BREVO_API_KEY;
 
   if (process.env.ENABLE_EMAILS === "false") {
     console.log(`📧 Email disabled. Would have sent to: ${to}`);
@@ -38,58 +16,46 @@ const sendEmail = async (to, subject, html) => {
     return false;
   }
 
-  // 🚀 Resend API Transport (HTTPS/443 - extremely reliable on Render)
-  if (process.env.RESEND_API_KEY) {
-    try {
-      console.log(`📧 [Resend] Attempting to send email to: ${to}`);
-      const fromEmail = process.env.EMAIL_FROM || "onboarding@resend.dev";
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: `Arogyam <${fromEmail}>`,
-          to: [to],
-          subject: subject,
-          html: html,
-        }),
-      });
-
-      const resData = await response.json();
-      if (response.ok) {
-        console.log("✅ Email Sent Successfully via Resend API:", resData.id);
-        return true;
-      } else {
-        console.error("❌ Resend API Error:", resData);
-        console.log("⚠️ Resend failed, falling back to SMTP...");
-      }
-    } catch (resendError) {
-      console.error("🔥 Resend API Fetch Error:", resendError.message);
-      console.log("⚠️ Resend failed, falling back to SMTP...");
-    }
+  if (!apiKey) {
+    console.error("❌ Email Error: BREVO_API_KEY is not defined in environment variables.");
+    return false;
   }
 
-  // 📧 Fallback: SMTP Transport via Nodemailer
   try {
-    console.log(`📧 Attempting to send email via SMTP to: ${to} from: ${sender}`);
-    const info = await getTransporter().sendMail({
-      from: sender,
-      to,
-      subject,
-      text: html.replace(/<[^>]*>/g, ''), // Plain text fallback
-      html,
-    });
+    console.log(`📧 Attempting to send email via Brevo to: ${to} from: ${senderEmail}`);
+    
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "Arogyam",
+          email: senderEmail,
+        },
+        to: [
+          {
+            email: to,
+          },
+        ],
+        subject: subject,
+        htmlContent: html,
+        textContent: html.replace(/<[^>]*>/g, ""), // Plain text fallback
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "api-key": apiKey,
+          "content-type": "application/json",
+        },
+      }
+    );
 
-    console.log("✅ Email Sent Successfully via SMTP:", info.messageId);
+    console.log("✅ Email Sent Successfully via Brevo:", response.data.messageId || response.data);
     return true;
   } catch (error) {
-    console.error("🔥 Detailed Email Error:", {
+    console.error("🔥 Detailed Brevo Email Error:", {
       message: error.message,
-      code: error.code,
-      command: error.command,
-      recipient: to
+      response: error.response ? error.response.data : "No response body",
+      recipient: to,
     });
     return false;
   }
