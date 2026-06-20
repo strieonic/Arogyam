@@ -9,14 +9,18 @@ export const helmetMiddleware = helmet({
   contentSecurityPolicy: false,                           // CSP handled at CDN level
 });
 
-/* ── General API limiter: 100 req / 15 min per IP ── */
+/* ── General API limiter: 1000 req / 15 min per IP ── */
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
   validate: false,
   message: { success: false, message: "Too many requests. Please try again later." },
+  skip: (req) => {
+    // Skip rate limiting for authenticated admin actions to prevent dashboard lockouts
+    return req.originalUrl && req.originalUrl.includes("/api/admin");
+  },
 });
 
 /* ── Auth limiter: 10 attempts / 15 min (login / OTP) ── */
