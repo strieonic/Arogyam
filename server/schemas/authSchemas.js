@@ -5,7 +5,7 @@ import { z } from "zod";
 /* ── Shared primitives ── */
 const phone = z
   .string()
-  .regex(/^[6-9]\d{9}$/, "Must be a valid 10-digit Indian mobile number");
+  .regex(/^[1-9]\d{9}$/, "Must be a valid 10-digit mobile number");
 
 const password = z
   .string()

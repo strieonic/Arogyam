@@ -21,6 +21,10 @@ const patientSchema = new mongoose.Schema(
       default: undefined,
     },
 
+    dob: {
+      type: String,
+    },
+
     // ================= IDENTITY =================
     aadhaar: {
       type: String,

@@ -11,21 +11,38 @@ const PatientRegister = () => {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', aadhaar: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors({ ...fieldErrors, [e.target.name]: null });
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setFieldErrors({});
     try {
       await api.post('/auth/patient/register', formData);
       setSuccess(true);
       setTimeout(() => navigate('/patient/login'), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      if (err.response?.data?.errors) {
+        setError(err.response.data.message);
+        const newFieldErrors = {};
+        err.response.data.errors.forEach(item => {
+          newFieldErrors[item.field] = item.message;
+        });
+        setFieldErrors(newFieldErrors);
+      } else {
+        setError(err.response?.data?.message || 'Registration failed');
+        setFieldErrors({});
+      }
     } finally {
       setLoading(false);
     }
@@ -52,6 +69,11 @@ const PatientRegister = () => {
               <FaUser style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
               <input type="text" name="name" className="glass-input" style={{ paddingLeft: '45px' }} placeholder={t('patient.fullNamePlaceholder')} required onChange={handleChange} />
             </div>
+            {fieldErrors.name && (
+              <span className="error-message" style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: '0.4rem', display: 'block' }}>
+                {fieldErrors.name}
+              </span>
+            )}
           </div>
           
           <div className="input-group">
@@ -60,6 +82,11 @@ const PatientRegister = () => {
               <FaPhoneAlt style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
               <input type="tel" name="phone" className="glass-input" style={{ paddingLeft: '45px' }} placeholder={t('patient.phonePlaceholder')} required onChange={handleChange} />
             </div>
+            {fieldErrors.phone && (
+              <span className="error-message" style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: '0.4rem', display: 'block' }}>
+                {fieldErrors.phone}
+              </span>
+            )}
           </div>
           <div className="input-group">
             <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Email Address</label>
@@ -67,6 +94,11 @@ const PatientRegister = () => {
               <FaEnvelope style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
               <input type="email" name="email" className="glass-input" style={{ paddingLeft: '45px' }} placeholder="Enter email address" required onChange={handleChange} />
             </div>
+            {fieldErrors.email && (
+              <span className="error-message" style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: '0.4rem', display: 'block' }}>
+                {fieldErrors.email}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -80,6 +112,11 @@ const PatientRegister = () => {
                 onChange={handleChange} 
                 max={new Date().toISOString().split('T')[0]}
               />
+              {fieldErrors.dob && (
+                <span className="error-message" style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: '0.4rem', display: 'block' }}>
+                  {fieldErrors.dob}
+                </span>
+              )}
             </div>
             <div className="input-group">
               <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Gender</label>
@@ -89,6 +126,11 @@ const PatientRegister = () => {
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
+              {fieldErrors.gender && (
+                <span className="error-message" style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: '0.4rem', display: 'block' }}>
+                  {fieldErrors.gender}
+                </span>
+              )}
             </div>
           </div>
 
@@ -98,6 +140,11 @@ const PatientRegister = () => {
               <FaIdCard style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
               <input type="text" name="aadhaar" className="glass-input" style={{ paddingLeft: '45px' }} placeholder={t('patient.aadhaarPlaceholder')} onChange={handleChange} maxLength={12} />
             </div>
+            {fieldErrors.aadhaar && (
+              <span className="error-message" style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: '0.4rem', display: 'block' }}>
+                {fieldErrors.aadhaar}
+              </span>
+            )}
           </div>
 
           <button type="submit" className="primary-btn" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
