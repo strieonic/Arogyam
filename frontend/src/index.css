@@ -178,17 +178,18 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Space Grotesk', sans-serif;
   color: var(--text-primary);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   line-height: 1.25;
   font-weight: 700;
 }
 
-h1 { font-size: var(--text-3xl); }
-h2 { font-size: var(--text-2xl); }
-h3 { font-size: var(--text-xl); }
-h4 { font-size: var(--text-lg); }
-h5 { font-size: var(--text-md); }
-h6 { font-size: var(--text-base); }
+/* Sane defaults — use utility classes for hero/landing sizes */
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; }
+h5 { font-size: 0.9rem; }
+h6 { font-size: 0.8rem; }
 
 p {
   line-height: 1.7;
@@ -351,7 +352,7 @@ button {
 ============================================================ */
 .glass-panel {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: clamp(var(--space-md), 4vw, var(--space-xl));
@@ -360,7 +361,7 @@ button {
 
 .glass-panel:hover {
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-light);
+  border-color: var(--border-medium);
 }
 
 .frosted-glass {
