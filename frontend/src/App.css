@@ -11,9 +11,7 @@
 }
 
 .main-content.constrained {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
   padding-top: 80px; /* Offset for fixed navbar */
 }
 

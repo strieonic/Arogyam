@@ -69,7 +69,7 @@ const MedicalTimeline = () => {
   const filtered = filter === 'all' ? events : events.filter(e => e.type === filter);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="page-wrapper max-w-4xl">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <Link to="/patient/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] transition-colors mb-3 inline-block">

@@ -61,7 +61,7 @@ const SearchPatient = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto px-4 py-8">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper">
       <div className="text-center mb-8">
         <h2 className="heading-gradient text-3xl font-bold mb-2">Smart Patient Search</h2>
         <p className="text-[var(--text-secondary)]">

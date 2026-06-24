@@ -43,7 +43,7 @@ const PatientDashboard = () => {
 
   return (
     <motion.div
-      className="max-w-6xl mx-auto px-6 py-8"
+      className="page-wrapper"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}

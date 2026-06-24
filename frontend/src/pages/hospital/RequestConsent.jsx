@@ -52,7 +52,7 @@ const RequestConsent = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: '500px', margin: '0 auto' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper max-w-2xl">
       <div className="glass-panel">
         <h2 className="heading-gradient text-center" style={{ marginBottom: '2rem' }}>
           <FaLock style={{ marginRight: '0.5rem' }} />

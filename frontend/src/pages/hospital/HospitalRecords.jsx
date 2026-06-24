@@ -56,7 +56,7 @@ const HospitalRecords = () => {
   const uniqueTypes = ['all', ...new Set(records.map(r => r.recordType?.toLowerCase()).filter(Boolean))];
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper max-w-5xl">
       <h2 className="heading-gradient" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <FaFileMedical /> {t('hospital.uploadedRecordsTitle')}
       </h2>

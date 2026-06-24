@@ -53,7 +53,7 @@ const MyPatients = () => {
     });
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper">
       <h2 className="heading-gradient" style={{ marginBottom: '2rem' }}>
         {t('hospital.directoryPageTitle')}
       </h2>

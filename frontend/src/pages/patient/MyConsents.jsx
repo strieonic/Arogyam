@@ -167,7 +167,7 @@ const MyConsents = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper">
       <AnimatePresence>
         {activeConsent && (
           <ConsentModal

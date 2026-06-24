@@ -24,7 +24,7 @@ const MyHospitals = () => {
   }, []);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper max-w-4xl">
       <h2 className="heading-gradient" style={{ marginBottom: '2rem' }}>{t('patient.myHospitalsTitle')}</h2>
       
       {loading ? (

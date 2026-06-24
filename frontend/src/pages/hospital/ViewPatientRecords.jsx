@@ -31,7 +31,7 @@ const ViewPatientRecords = () => {
   }, [healthId, t]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper max-w-5xl">
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
         <button onClick={() => navigate('/hospital/search')} className="ghost-btn" style={{ padding: '8px', borderRadius: '50%' }}>
           <FaArrowLeft />

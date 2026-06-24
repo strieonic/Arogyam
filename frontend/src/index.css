@@ -31,10 +31,10 @@
   --warning: #FFB347;
 
   /* ── Border & Surface ── */
-  --border-subtle: rgba(255, 255, 255, 0.1);
-  --border-light: rgba(255, 255, 255, 0.16);
-  --border-medium: rgba(255, 255, 255, 0.22);
-  --border-accent: rgba(255, 51, 102, 0.4);
+  --border-subtle: rgba(255, 255, 255, 0.12);
+  --border-light: rgba(255, 255, 255, 0.2);
+  --border-medium: rgba(255, 255, 255, 0.3);
+  --border-accent: rgba(255, 51, 102, 0.5);
 
   /* ── Shadows (glow-based for dark) ── */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -807,6 +807,43 @@ textarea:disabled {
   justify-content: flex-end;
   gap: var(--space-md);
   margin-top: var(--space-lg);
+}
+
+/* ============================================================
+   PAGE LAYOUT UTILITIES
+   Consistent spacing for all app pages
+============================================================ */
+.page-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: calc(100vh - 80px);
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 1.25rem 1rem;
+  }
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-header h1,
+.page-header h2 {
+  margin-bottom: 0.25rem;
+}
+
+.page-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
 }
 
 /* ============================================================

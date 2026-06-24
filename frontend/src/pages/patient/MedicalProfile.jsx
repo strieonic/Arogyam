@@ -73,7 +73,7 @@ const MedicalProfile = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
+      <div className="page-wrapper max-w-3xl">
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
           <SkeletonBox width="260px" height="40px" className="rounded-lg" />
         </div>
@@ -94,7 +94,7 @@ const MedicalProfile = () => {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="dashboard-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="page-wrapper max-w-3xl">
       <h1 className="heading-gradient text-center" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
         <FaHeartbeat />
         Medical Profile

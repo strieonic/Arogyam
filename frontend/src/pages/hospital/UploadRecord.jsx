@@ -41,7 +41,7 @@ const UploadRecord = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper max-w-2xl">
       <div className="glass-panel">
         <h2 className="heading-gradient text-center" style={{ marginBottom: '2rem' }}>{t('hospital.uploadTitle')}</h2>
         <p className="text-center" style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '0.9rem' }}>

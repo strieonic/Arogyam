@@ -85,7 +85,7 @@ const MedicineReminders = () => {
   const removeTimeSlot = (idx) => setForm(f => ({ ...f, times: f.times.filter((_, i) => i !== idx) }));
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="page-wrapper">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <Link to="/patient/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] transition-colors mb-3 inline-block">

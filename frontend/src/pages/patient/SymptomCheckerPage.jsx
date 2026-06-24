@@ -82,7 +82,7 @@ const SymptomCheckerPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 relative">
+    <div className="page-wrapper relative">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-end">
         <div>

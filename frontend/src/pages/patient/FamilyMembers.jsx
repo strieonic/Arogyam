@@ -66,7 +66,7 @@ const FamilyMembers = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="dashboard-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-wrapper">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 className="heading-gradient"><FaUsers style={{ marginRight: '10px' }}/> Family Management</h1>
         <button className="primary-btn" onClick={() => setShowAddForm(!showAddForm)}>

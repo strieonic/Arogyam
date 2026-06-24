@@ -60,7 +60,7 @@ const HealthCard = () => {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8 flex justify-center items-center min-h-[60vh]">
+      <div className="page-wrapper max-w-3xl flex justify-center items-center">
         <SkeletonBox width="100%" height="260px" className="max-w-md rounded-[2rem]" />
       </div>
     );
@@ -73,7 +73,7 @@ const HealthCard = () => {
     : (profileData?.allergies || 'None');
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 print:p-0 print:m-0">
+    <div className="page-wrapper print:p-0 print:m-0">
       {/* Page Header */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8 print:hidden">
         <Link to="/patient/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] transition-colors mb-3 inline-block">
