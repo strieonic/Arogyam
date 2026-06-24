@@ -3,19 +3,25 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
-import { getHealthCard } from '../../services/patientService';
+import { getPatientProfile } from '../../services/patientService';
 import { Link } from 'react-router-dom';
-import { FaDownload, FaShareAlt } from 'react-icons/fa';
+import { SkeletonBox } from '../../components/ui/SkeletonLoader';
+import { FaDownload, FaShareAlt, FaSyncAlt } from 'react-icons/fa';
+import { toast } from 'sonner';
 
 const HealthCard = () => {
   const { t } = useTranslation();
-  const [cardData, setCardData] = useState(null);
+  const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [flipped, setFlipped] = useState(false);
 
   useEffect(() => {
-    getHealthCard()
-      .then(res => setCardData(res.data))
-      .catch(err => console.error("Failed to fetch health card", err))
+    getPatientProfile()
+      .then(res => setProfileData(res.data))
+      .catch(err => {
+        console.error("Failed to fetch patient profile for card", err);
+        toast.error("Failed to load health card information");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -23,106 +29,322 @@ const HealthCard = () => {
     window.print();
   };
 
+  const handleShare = () => {
+    if (profileData?.healthId) {
+      navigator.clipboard.writeText(profileData.healthId);
+      toast.success("Arogyam ID copied to clipboard for sharing!");
+    }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return '??';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
+  const getAge = (dobString) => {
+    if (!dobString) return '—';
+    const dob = new Date(dobString);
+    const diffMs = Date.now() - dob.getTime();
+    const ageDate = new Date(diffMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '—';
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8 flex justify-center items-center min-h-[60vh]">
-        <div className="skeleton w-full max-w-md h-[400px] rounded-3xl" />
+        <SkeletonBox width="100%" height="260px" className="max-w-md rounded-[2rem]" />
       </div>
     );
   }
 
+
+  // Format allergies array or string
+  const allergyList = Array.isArray(profileData?.allergies) 
+    ? profileData.allergies.join(', ') 
+    : (profileData?.allergies || 'None');
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 print:p-0 print:m-0">
+    <div className="max-w-4xl mx-auto px-4 py-8 print:p-0 print:m-0">
+      {/* Page Header */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8 print:hidden">
         <Link to="/patient/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] transition-colors mb-3 inline-block">
           ← Back to Dashboard
         </Link>
-        <h1 className="heading-gradient text-3xl font-bold">Emergency QR Card</h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">Your secure digital health identity</p>
+        <h1 className="heading-gradient text-3xl font-bold">Emergency Health Card</h1>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">Your secure, flippable digital health identity card</p>
       </motion.div>
 
-      <div className="flex flex-col md:flex-row gap-8 items-start print:block">
-        {/* Card Container */}
-        <motion.div 
-          id="health-card-to-print"
-          className="relative w-full max-w-md mx-auto md:mx-0 p-6 sm:p-8 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl print:shadow-none print:border-gray-200 print:text-black print:bg-white"
-          style={{
-            background: 'linear-gradient(135deg, rgba(15, 76, 129, 0.4) 0%, rgba(0, 242, 254, 0.1) 100%)',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(16px)'
-          }}
-          whileHover={{ rotateY: 2, rotateX: 2 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        >
-          {/* Background Glow */}
-          <div className="absolute -top-16 -right-16 w-48 h-48 bg-[var(--secondary-color)] opacity-20 blur-[50px] rounded-full pointer-events-none print:hidden" />
-          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[var(--accent-pink)] opacity-10 blur-[50px] rounded-full pointer-events-none print:hidden" />
-          
-          {/* Header */}
-          <div className="flex justify-between items-start border-b border-white/10 pb-5 mb-6 relative z-10 print:border-gray-200">
-            <div>
-              <h2 className="text-2xl font-bold tracking-wider text-white print:text-blue-900">Arogyam<span className="text-[var(--secondary-color)] print:text-blue-600">ID</span></h2>
-              <p className="text-xs text-[var(--text-secondary)] mt-1 uppercase tracking-widest print:text-gray-500">Republic of India</p>
-            </div>
-            <div className="p-2 bg-white rounded-xl shadow-lg border border-white/20 print:border-gray-300">
-              {cardData && <QRCodeSVG value={cardData.healthId} size={70} level="M" />}
+      <div className="flex flex-col md:flex-row gap-8 items-center md:items-start print:block">
+        {/* Interactive 3D Flip Card */}
+        <div className="w-full flex flex-col items-center gap-4 print:hidden">
+          <div 
+            className={`health-card-scene ${flipped ? 'is-flipped' : ''}`}
+            onClick={() => setFlipped(!flipped)}
+          >
+            <div className="health-card-inner">
+              {/* CARD FRONT */}
+              <div className="health-card-front">
+                {/* Background Glows */}
+                <div className="absolute -top-16 -right-16 w-48 h-48 bg-[var(--secondary-color)] opacity-20 blur-[50px] rounded-full pointer-events-none" />
+                <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[var(--accent-pink)] opacity-10 blur-[50px] rounded-full pointer-events-none" />
+
+                {/* Card Header */}
+                <div className="flex justify-between items-center border-b border-white/10 pb-3 relative z-10">
+                  <div>
+                    <h2 className="text-xl font-bold tracking-wider text-white">
+                      Arogyam<span className="text-[var(--secondary-color)]">ID</span>
+                    </h2>
+                    <p className="text-[9px] text-[var(--text-tertiary)] uppercase tracking-widest">Republic of India</p>
+                  </div>
+                  <span className="card-badge success">Emergency Card</span>
+                </div>
+
+                {/* Card Body */}
+                <div className="flex gap-4 items-center relative z-10 py-3">
+                  {/* Left Column (Initials Avatar & QR Code) */}
+                  <div className="flex flex-col gap-3 items-center">
+                    <div className="card-avatar-initials">
+                      {getInitials(profileData?.name)}
+                    </div>
+                  </div>
+
+                  {/* Right Column (General Metadata) */}
+                  <div className="flex-1 space-y-1.5 min-w-0">
+                    <div>
+                      <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Cardholder Name</p>
+                      <h3 className="text-lg text-white font-bold truncate leading-tight">{profileData?.name || 'N/A'}</h3>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Arogyam ID</p>
+                        <h4 className="text-[11px] text-[var(--secondary-color)] font-mono font-bold truncate">
+                          {profileData?.healthId || 'N/A'}
+                        </h4>
+                      </div>
+                      <div>
+                        <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Aadhaar No.</p>
+                        <h4 className="text-[11px] text-white font-mono truncate">
+                          {profileData?.aadhaar ? `XXXX XXXX ${profileData.aadhaar.slice(-4)}` : '—'}
+                        </h4>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1 pt-1.5 border-t border-white/5">
+                      <div>
+                        <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Blood</p>
+                        <h4 className="text-xs text-[var(--accent-primary)] font-black">{profileData?.bloodGroup || '—'}</h4>
+                      </div>
+                      <div>
+                        <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Gender</p>
+                        <h4 className="text-xs text-white font-semibold capitalize">{profileData?.gender || '—'}</h4>
+                      </div>
+                      <div>
+                        <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Age</p>
+                        <h4 className="text-xs text-white font-semibold">{profileData?.dob ? `${getAge(profileData.dob)} yrs` : '—'}</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card Footer */}
+                <div className="flex justify-between items-end pt-2 border-t border-white/5 relative z-10">
+                  <div>
+                    <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">DOB</p>
+                    <p className="text-[10px] text-white font-mono">{formatDate(profileData?.dob)}</p>
+                  </div>
+                  <div className="p-1 bg-white rounded-lg shadow-lg border border-white/20 flex items-center justify-center">
+                    {profileData && <QRCodeSVG value={profileData.healthId} size={42} level="M" />}
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD BACK */}
+              <div className="health-card-back">
+                {/* Header */}
+                <div className="flex justify-between items-center border-b border-white/10 pb-3 relative z-10">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white">Emergency & Medical Details</h3>
+                  <span className="card-badge danger">Scan for Records</span>
+                </div>
+
+                {/* Body Details */}
+                <div className="space-y-2.5 relative z-10 py-2 text-[11px]">
+                  <div>
+                    <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Permanent Address</span>
+                    <p className="text-white line-clamp-2 leading-tight">{profileData?.address || 'No address provided'}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-2">
+                    <div>
+                      <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Primary Contact</span>
+                      <p className="text-white font-medium truncate">{profileData?.phone || '—'}</p>
+                      <p className="text-[9px] text-[var(--text-tertiary)] truncate">{profileData?.email || '—'}</p>
+                    </div>
+                    <div>
+                      <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Emergency Contact</span>
+                      <p className="text-white font-bold truncate">
+                        {profileData?.emergencyContact?.phone || profileData?.emergencyContact || '—'}
+                      </p>
+                      <p className="text-[9px] text-[var(--text-tertiary)] truncate">
+                        {profileData?.emergencyContact?.name || 'Primary'} ({profileData?.emergencyContact?.relation || 'Contact'})
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/5 pt-2">
+                    <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Known Allergies</span>
+                    <p className="text-[var(--accent-pink)] font-semibold truncate leading-none">{allergyList}</p>
+                  </div>
+                </div>
+
+                {/* Footer disclaimer */}
+                <div className="pt-2 border-t border-white/5 text-[8px] text-[var(--text-tertiary)] leading-tight text-center relative z-10">
+                  This card is part of the Arogyam network. Show this QR code to medical officers for record query authorization.
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-5 relative z-10">
-            {/* Name */}
-            <div>
-              <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 print:text-gray-500">Cardholder Name</p>
-              <h3 className="text-xl sm:text-2xl text-white font-bold print:text-black">{cardData?.name || 'N/A'}</h3>
+          {/* Interactive hints */}
+          <button 
+            className="flex items-center gap-2 text-xs text-[var(--text-secondary)] hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-full border border-white/10"
+            onClick={() => setFlipped(!flipped)}
+          >
+            <FaSyncAlt className="animate-pulse" /> Click card to flip and check details
+          </button>
+        </div>
+
+        {/* Flat Layout visible ONLY for window.print() */}
+        <div className="health-card-print-grid">
+          {/* PRINT FRONT */}
+          <div className="print-card-face">
+            <div className="flex justify-between items-center border-b card-border-sep pb-3">
+              <div>
+                <h2 className="text-xl font-bold tracking-wider card-text-highlight">
+                  ArogyamID
+                </h2>
+                <p className="text-[9px] card-text-muted uppercase tracking-widest">Republic of India</p>
+              </div>
+              <span className="text-[10px] font-bold uppercase border border-emerald-300 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                Emergency Card
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 print:text-gray-500">Arogyam ID</p>
-                <h3 className="text-sm sm:text-base text-[var(--secondary-color)] font-mono tracking-wider font-bold print:text-blue-700">
-                  {cardData?.healthId || 'N/A'}
-                </h3>
+            <div className="flex gap-4 items-center py-4">
+              <div className="w-16 h-16 bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-center font-bold text-xl text-slate-700">
+                {getInitials(profileData?.name)}
               </div>
-              <div>
-                <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 print:text-gray-500">Aadhaar No.</p>
-                <h3 className="text-sm sm:text-base text-white font-mono tracking-wider font-semibold print:text-black">
-                  {cardData?.aadhaar ? `XXXX XXXX ${cardData.aadhaar.slice(-4)}` : '—'}
-                </h3>
+
+              <div className="flex-1 space-y-1">
+                <div>
+                  <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">Cardholder Name</p>
+                  <h3 className="text-lg card-text-dark font-bold">{profileData?.name || 'N/A'}</h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">Arogyam ID</p>
+                    <h4 className="text-xs card-text-highlight font-mono font-bold">{profileData?.healthId || 'N/A'}</h4>
+                  </div>
+                  <div>
+                    <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">Aadhaar No.</p>
+                    <h4 className="text-xs card-text-dark font-mono">
+                      {profileData?.aadhaar ? `XXXX XXXX ${profileData.aadhaar.slice(-4)}` : '—'}
+                    </h4>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 py-4 border-y border-white/10 bg-white/5 -mx-6 sm:-mx-8 px-6 sm:px-8 print:bg-gray-50 print:border-gray-200">
+            <div className="grid grid-cols-4 gap-2 pt-2 border-t card-border-sep text-center">
               <div>
-                <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 print:text-gray-500">Blood Group</p>
-                <h3 className="text-xl text-[var(--accent-pink)] font-black print:text-red-600">{cardData?.bloodGroup || '—'}</h3>
+                <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">DOB</p>
+                <h4 className="text-xs card-text-dark font-semibold">{formatDate(profileData?.dob)}</h4>
               </div>
               <div>
-                <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 print:text-gray-500">Allergies</p>
-                <p className="text-sm text-white font-medium print:text-black">{cardData?.allergies || 'None'}</p>
+                <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">Blood</p>
+                <h4 className="text-xs text-red-600 font-black">{profileData?.bloodGroup || '—'}</h4>
+              </div>
+              <div>
+                <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">Gender</p>
+                <h4 className="text-xs card-text-dark font-semibold capitalize">{profileData?.gender || '—'}</h4>
+              </div>
+              <div>
+                <p className="text-[8px] card-text-muted uppercase tracking-widest font-bold">Age</p>
+                <h4 className="text-xs card-text-dark font-semibold">{profileData?.dob ? `${getAge(profileData.dob)} yrs` : '—'}</h4>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 print:text-gray-500">Contact</p>
-                <h3 className="text-sm text-white font-medium print:text-black">{cardData?.phone || '—'}</h3>
-              </div>
-              <div>
-                <p className="text-[0.65rem] text-[var(--text-secondary)] uppercase tracking-widest font-semibold mb-1 flex items-center gap-1 print:text-gray-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse print:animate-none"></span> Emergency
-                </p>
-                <h3 className="text-sm text-red-400 font-bold print:text-red-700">{cardData?.emergencyContact || '—'}</h3>
+            <div className="flex justify-between items-center pt-2 border-t card-border-sep">
+              <span className="text-[8px] card-text-muted">AROGYAM PATIENT NETWORK</span>
+              <div className="border border-slate-300 p-1 bg-white rounded">
+                {profileData && <QRCodeSVG value={profileData.healthId} size={50} level="M" />}
               </div>
             </div>
           </div>
-        </motion.div>
+
+          {/* PRINT BACK */}
+          <div className="print-card-face">
+            <div className="flex justify-between items-center border-b card-border-sep pb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider card-text-highlight">Emergency & Medical Details</h3>
+              <span className="text-[9px] font-bold uppercase border border-red-300 bg-red-50 text-red-700 px-2 py-0.5 rounded-full">
+                Scan Front QR
+              </span>
+            </div>
+
+            <div className="space-y-3 py-3 text-xs">
+              <div>
+                <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Permanent Address</span>
+                <p className="card-text-dark leading-tight">{profileData?.address || 'No address provided'}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 border-t card-border-sep pt-2">
+                <div>
+                  <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Primary Contact</span>
+                  <p className="card-text-dark font-semibold">{profileData?.phone || '—'}</p>
+                  <p className="text-[9px] card-text-muted truncate">{profileData?.email || '—'}</p>
+                </div>
+                <div>
+                  <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Emergency Contact</span>
+                  <p className="card-text-dark font-bold">
+                    {profileData?.emergencyContact?.phone || profileData?.emergencyContact || '—'}
+                  </p>
+                  <p className="text-[9px] card-text-muted truncate">
+                    {profileData?.emergencyContact?.name || 'Primary'} ({profileData?.emergencyContact?.relation || 'Contact'})
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t card-border-sep pt-2">
+                <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Known Allergies</span>
+                <p className="text-red-700 font-bold truncate">{allergyList}</p>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t card-border-sep text-[8px] card-text-muted text-center leading-tight">
+              This card is part of the Arogyam network. Show this QR code to medical officers for record query authorization.
+            </div>
+          </div>
+        </div>
 
         {/* Actions panel */}
         <div className="flex-1 w-full space-y-4 print:hidden">
           <div className="glass-panel !p-6 border-l-4 border-[var(--secondary-color)]">
-            <h3 className="font-bold text-[var(--text-primary)] mb-2 text-lg">How to use this card</h3>
-            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-              Show this QR code at any Arogyam-registered hospital. Doctors can scan it to instantly request access to your medical history, saving time during emergencies.
+            <h3 className="font-bold text-[var(--text-primary)] mb-2 text-lg">Digital Emergency ID</h3>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
+              This flippable smart card compiles your vital identity, contact, emergency details, and allergy warnings. 
+            </p>
+            <p className="text-xs text-[var(--text-tertiary)] leading-relaxed">
+              💡 <strong>How to use:</strong> Show this card to any healthcare officer. When scanned, it authorizes secure record query consent. Click on the card to flip it and review the details stored on the back.
             </p>
           </div>
           
@@ -130,11 +352,16 @@ const HealthCard = () => {
             <button 
               onClick={handleDownload}
               className="primary-btn !py-3 flex-1 flex items-center justify-center gap-2"
+              title="Download PDF copy"
             >
               <FaDownload /> Download PDF
             </button>
-            <button className="secondary-btn !py-3 flex-1 flex items-center justify-center gap-2">
-              <FaShareAlt /> Share
+            <button 
+              onClick={handleShare}
+              className="secondary-btn !py-3 flex-1 flex items-center justify-center gap-2"
+              title="Copy ID to Clipboard"
+            >
+              <FaShareAlt /> Share ID
             </button>
           </div>
         </div>

@@ -391,6 +391,13 @@ label {
   margin-bottom: var(--space-xs);
 }
 
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
 .glass-input {
   width: 100%;
   padding: 14px 16px;
@@ -668,4 +675,273 @@ textarea:disabled {
   white-space: nowrap;
   border: 0;
 }
+
+/* ============================================================
+   GLOBAL STATUS BADGES
+   Consistent color states for status tracking
+============================================================ */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+}
+
+/* Approved / Success / Active state */
+.status-badge.approved,
+.status-badge.active,
+.status-badge.success {
+  background: rgba(52, 199, 89, 0.12);
+  color: var(--success);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+}
+.status-badge.approved::before,
+.status-badge.active::before,
+.status-badge.success::before {
+  background: var(--success);
+}
+
+/* Pending / Warning / Review state */
+.status-badge.pending,
+.status-badge.under_review,
+.status-badge.warning {
+  background: rgba(255, 179, 71, 0.12);
+  color: var(--warning);
+  border: 1px solid rgba(255, 179, 71, 0.2);
+}
+.status-badge.pending::before,
+.status-badge.under_review::before,
+.status-badge.warning::before {
+  background: var(--warning);
+}
+
+/* Rejected / Danger / Suspended state */
+.status-badge.rejected,
+.status-badge.suspended,
+.status-badge.danger {
+  background: rgba(255, 59, 48, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(255, 59, 48, 0.2);
+}
+.status-badge.rejected::before,
+.status-badge.suspended::before,
+.status-badge.danger::before {
+  background: var(--danger);
+}
+
+/* Default / Inactive / Neutral state */
+.status-badge.default,
+.status-badge.inactive,
+.status-badge.neutral {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+.status-badge.default::before,
+.status-badge.inactive::before,
+.status-badge.neutral::before {
+  background: var(--text-secondary);
+}
+
+[data-theme="light"] .status-badge.default,
+[data-theme="light"] .status-badge.inactive,
+[data-theme="light"] .status-badge.neutral {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ============================================================
+   FORM GRIDS & UTILITIES
+   Standardizes form layout without relying on inline styling
+============================================================ */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+/* ============================================================
+   3D FLIP HEALTH ID CARD SYSTEM
+============================================================ */
+.health-card-scene {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .health-card-scene {
+    margin: 0;
+  }
+}
+
+.health-card-inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.58 / 1;
+  text-align: left;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.health-card-scene.is-flipped .health-card-inner {
+  transform: rotateY(180deg);
+}
+
+.health-card-front, .health-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.health-card-front {
+  background: linear-gradient(135deg, rgba(15, 76, 129, 0.45) 0%, rgba(0, 212, 170, 0.15) 100%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.health-card-back {
+  background: linear-gradient(135deg, rgba(107, 33, 168, 0.45) 0%, rgba(255, 51, 102, 0.15) 100%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  transform: rotateY(180deg);
+}
+
+.card-avatar-initials {
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 4px 16px rgba(255, 51, 102, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-badge.success {
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--success);
+}
+
+.card-badge.danger {
+  background: rgba(255, 59, 48, 0.15);
+  color: var(--danger);
+}
+
+/* Print card flat side-by-side grid */
+.health-card-print-grid {
+  display: none;
+}
+
+@media print {
+  .health-card-scene {
+    display: none !important;
+  }
+  
+  .health-card-print-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    margin-top: 2rem;
+  }
+  
+  .print-card-face {
+    width: 100%;
+    aspect-ratio: 1.58 / 1;
+    border-radius: 16px;
+    border: 1.5px solid #cbd5e1;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .print-card-face .card-text-muted {
+    color: #475569 !important;
+  }
+
+  .print-card-face .card-text-highlight {
+    color: #1e3a8a !important;
+  }
+
+  .print-card-face .card-text-dark {
+    color: #0f172a !important;
+  }
+
+  .print-card-face .card-bg-soft {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .print-card-face .card-border-sep {
+    border-color: #e2e8f0 !important;
+  }
+}
+
+
 

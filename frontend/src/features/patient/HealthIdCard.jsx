@@ -15,7 +15,10 @@ const HealthIdCard = ({ user }) => {
   return (
     <motion.div
       className="col-span-2 row-span-2 rounded-3xl p-8 flex flex-col justify-between border border-white/10 shadow-xl"
-      style={{ background: 'linear-gradient(135deg, #1d1d1f 0%, #0a2540 100%)' }}
+      style={{
+        background: 'linear-gradient(135deg, rgba(15, 76, 129, 0.4) 0%, rgba(0, 212, 170, 0.15) 100%)',
+        backdropFilter: 'blur(16px)'
+      }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

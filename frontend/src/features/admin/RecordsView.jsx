@@ -1,6 +1,4 @@
-// src/features/admin/RecordsView.jsx
-// Medical records read-only table
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Icons } from './adminIcons';
@@ -8,15 +6,24 @@ import { formatDate } from '../../utils/formatters';
 
 const RecordsView = ({ records, searchQuery, onSearchChange }) => {
   const { t } = useTranslation();
+  const [sortBy, setSortBy] = useState('newest');
 
-  const filtered = records.filter((r) => {
-    const q = searchQuery.toLowerCase();
-    return !q ||
-      r.patient?.name?.toLowerCase().includes(q) ||
-      r.patient?.healthId?.toLowerCase().includes(q) ||
-      r.hospital?.hospitalName?.toLowerCase().includes(q) ||
-      r.recordType?.toLowerCase().includes(q);
-  });
+  const filtered = records
+    .filter((r) => {
+      const q = searchQuery.toLowerCase();
+      return !q ||
+        r.patient?.name?.toLowerCase().includes(q) ||
+        r.patient?.healthId?.toLowerCase().includes(q) ||
+        r.hospital?.hospitalName?.toLowerCase().includes(q) ||
+        r.recordType?.toLowerCase().includes(q);
+    })
+    .sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+      if (sortBy === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+      if (sortBy === 'patient-az') return (a.patient?.name || '').localeCompare(b.patient?.name || '');
+      if (sortBy === 'hospital-az') return (a.hospital?.hospitalName || '').localeCompare(b.hospital?.hospitalName || '');
+      return 0;
+    });
 
   return (
     <motion.div key="records" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
@@ -39,8 +46,30 @@ const RecordsView = ({ records, searchQuery, onSearchChange }) => {
                 onChange={(e) => onSearchChange(e.target.value)}
               />
             </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="table-filter-btn"
+              style={{ 
+                background: 'var(--bg-surface)', 
+                border: '1px solid var(--border-subtle)', 
+                borderRadius: 'var(--radius-sm)', 
+                padding: '8px 16px', 
+                color: 'var(--text-primary)', 
+                cursor: 'pointer',
+                fontWeight: 600,
+                outline: 'none',
+                height: '38px'
+              }}
+            >
+              <option value="newest">Uploaded (Newest)</option>
+              <option value="oldest">Uploaded (Oldest)</option>
+              <option value="patient-az">Patient Name (A-Z)</option>
+              <option value="hospital-az">Hospital Name (A-Z)</option>
+            </select>
           </div>
         </div>
+
 
         {filtered.length === 0 ? (
           <div className="admin-empty">

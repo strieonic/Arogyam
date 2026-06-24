@@ -1,6 +1,4 @@
-// src/features/admin/UserManagement.jsx
-// Patient management table with delete action
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Icons } from './adminIcons';
@@ -8,14 +6,23 @@ import { formatDate } from '../../utils/formatters';
 
 const UserManagement = ({ patients, searchQuery, onSearchChange, onConfirm }) => {
   const { t } = useTranslation();
+  const [sortBy, setSortBy] = useState('name-az');
 
-  const filtered = patients.filter((p) => {
-    const q = searchQuery.toLowerCase();
-    return !q ||
-      p.name?.toLowerCase().includes(q) ||
-      p.healthId?.toLowerCase().includes(q) ||
-      p.phone?.includes(q);
-  });
+  const filtered = patients
+    .filter((p) => {
+      const q = searchQuery.toLowerCase();
+      return !q ||
+        p.name?.toLowerCase().includes(q) ||
+        p.healthId?.toLowerCase().includes(q) ||
+        p.phone?.includes(q);
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name-az') return (a.name || '').localeCompare(b.name || '');
+      if (sortBy === 'name-za') return (b.name || '').localeCompare(a.name || '');
+      if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+      if (sortBy === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+      return 0;
+    });
 
   return (
     <motion.div key="patients" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
@@ -38,8 +45,29 @@ const UserManagement = ({ patients, searchQuery, onSearchChange, onConfirm }) =>
                 onChange={(e) => onSearchChange(e.target.value)}
               />
             </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="table-filter-btn"
+              style={{ 
+                background: 'var(--bg-surface)', 
+                border: '1px solid var(--border-subtle)', 
+                borderRadius: 'var(--radius-sm)', 
+                padding: '8px 16px', 
+                color: 'var(--text-primary)', 
+                cursor: 'pointer',
+                fontWeight: 600,
+                outline: 'none'
+              }}
+            >
+              <option value="name-az">Name (A-Z)</option>
+              <option value="name-za">Name (Z-A)</option>
+              <option value="newest">Registered (Newest)</option>
+              <option value="oldest">Registered (Oldest)</option>
+            </select>
           </div>
         </div>
+
 
         {filtered.length === 0 ? (
           <div className="admin-empty">

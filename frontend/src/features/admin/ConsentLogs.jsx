@@ -1,6 +1,4 @@
-// src/features/admin/ConsentLogs.jsx
-// Consent logs table with status filter
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Icons } from './adminIcons';
@@ -8,15 +6,22 @@ import { formatDate, formatDateTime } from '../../utils/formatters';
 
 const ConsentLogs = ({ consents, searchQuery, onSearchChange, filterStatus, onFilterChange }) => {
   const { t } = useTranslation();
+  const [sortBy, setSortBy] = useState('newest');
 
-  const filtered = consents.filter((c) => {
-    const q = searchQuery.toLowerCase();
-    const matchSearch = !q ||
-      c.patientId?.name?.toLowerCase().includes(q) ||
-      c.hospitalId?.hospitalName?.toLowerCase().includes(q);
-    const matchFilter = filterStatus === 'all' || c.status === filterStatus;
-    return matchSearch && matchFilter;
-  });
+  const filtered = consents
+    .filter((c) => {
+      const q = searchQuery.toLowerCase();
+      const matchSearch = !q ||
+        c.patientId?.name?.toLowerCase().includes(q) ||
+        c.hospitalId?.hospitalName?.toLowerCase().includes(q);
+      const matchFilter = filterStatus === 'all' || c.status === filterStatus;
+      return matchSearch && matchFilter;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
+      if (sortBy === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
+      return 0;
+    });
 
   return (
     <motion.div key="consents" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
@@ -28,7 +33,7 @@ const ConsentLogs = ({ consents, searchQuery, onSearchChange, filterStatus, onFi
       <div className="admin-table-wrapper">
         <div className="admin-table-header">
           <h3>{t('admin.allConsents')} ({filtered.length})</h3>
-          <div className="table-controls">
+          <div className="table-controls" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
             <div className="search-input-wrap">
               <Icons.Search />
               <input
@@ -39,6 +44,27 @@ const ConsentLogs = ({ consents, searchQuery, onSearchChange, filterStatus, onFi
                 onChange={(e) => onSearchChange(e.target.value)}
               />
             </div>
+            
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="table-filter-btn"
+              style={{ 
+                background: 'var(--bg-surface)', 
+                border: '1px solid var(--border-subtle)', 
+                borderRadius: 'var(--radius-sm)', 
+                padding: '8px 16px', 
+                color: 'var(--text-primary)', 
+                cursor: 'pointer',
+                fontWeight: 600,
+                outline: 'none',
+                height: '38px'
+              }}
+            >
+              <option value="newest">Requested (Newest)</option>
+              <option value="oldest">Requested (Oldest)</option>
+            </select>
+
             {['all', 'pending', 'approved', 'rejected'].map((f) => (
               <button
                 key={f}
