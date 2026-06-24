@@ -31,10 +31,10 @@
   --warning: #FFB347;
 
   /* ── Border & Surface ── */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-light: rgba(255, 255, 255, 0.1);
-  --border-medium: rgba(255, 255, 255, 0.15);
-  --border-accent: rgba(255, 51, 102, 0.3);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-light: rgba(255, 255, 255, 0.16);
+  --border-medium: rgba(255, 255, 255, 0.22);
+  --border-accent: rgba(255, 51, 102, 0.4);
 
   /* ── Shadows (glow-based for dark) ── */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -65,10 +65,10 @@
   --accent-primary-glow: rgba(255, 51, 102, 0.4);
   --accent-secondary-soft: rgba(0, 212, 170, 0.15);
 
-  --border-subtle: rgba(0, 0, 0, 0.06);
-  --border-light: rgba(0, 0, 0, 0.12);
-  --border-medium: rgba(0, 0, 0, 0.2);
-  --border-accent: rgba(255, 51, 102, 0.5);
+  --border-subtle: rgba(0, 0, 0, 0.09);
+  --border-light: rgba(0, 0, 0, 0.15);
+  --border-medium: rgba(0, 0, 0, 0.24);
+  --border-accent: rgba(255, 51, 102, 0.55);
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
@@ -179,16 +179,16 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Space Grotesk', sans-serif;
   color: var(--text-primary);
   letter-spacing: -0.03em;
-  line-height: 1.1;
+  line-height: 1.25;
   font-weight: 700;
 }
 
-h1 { font-size: var(--text-hero); }
-h2 { font-size: var(--text-4xl); }
-h3 { font-size: var(--text-3xl); }
-h4 { font-size: var(--text-2xl); }
-h5 { font-size: var(--text-xl); }
-h6 { font-size: var(--text-lg); }
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+h4 { font-size: var(--text-lg); }
+h5 { font-size: var(--text-md); }
+h6 { font-size: var(--text-base); }
 
 p {
   line-height: 1.7;
@@ -398,7 +398,7 @@ label {
 }
 
 
-.glass-input {
+.glass-input, .form-input {
   width: 100%;
   padding: 14px 16px;
   background: var(--bg-surface);
@@ -410,23 +410,23 @@ label {
   transition: var(--transition);
 }
 
-.glass-input::placeholder {
+.glass-input::placeholder, .form-input::placeholder {
   color: var(--text-tertiary);
 }
 
-.glass-input:focus {
+.glass-input:focus, .form-input:focus {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px var(--accent-primary-soft);
   background: var(--bg-elevated);
 }
 
-select.glass-input, .glass-input option {
+select.glass-input, select.form-input, .glass-input option, .form-input option {
   background-color: var(--bg-surface);
   color: var(--text-primary);
 }
 
-select.glass-input {
+select.glass-input, select.form-input {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238A8A9A' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -434,7 +434,7 @@ select.glass-input {
   padding-right: 40px;
 }
 
-textarea.glass-input {
+textarea.glass-input, textarea.form-input {
   resize: vertical;
   min-height: 80px;
 }
@@ -503,7 +503,7 @@ input[type="file"].glass-input::file-selector-button:hover {
 
 .bento-tile {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
   padding: var(--space-lg);
   transition: var(--transition);
@@ -517,7 +517,20 @@ input[type="file"].glass-input::file-selector-button:hover {
 .bento-tile:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: var(--border-light);
+  border-color: var(--border-medium);
+}
+
+.bento-tile h3 {
+  font-size: 1.05rem !important;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-top: 0.25rem;
+}
+
+.bento-tile p {
+  font-size: 0.8rem !important;
+  line-height: 1.4;
+  color: var(--text-secondary);
 }
 
 .span-2 { grid-column: span 2; }

@@ -96,7 +96,7 @@ const ActionTile = ({ action, index }) => {
         <Icon style={{ fontSize: isWide ? '2rem' : '2.5rem', color: action.color }} />
       </div>
       <div className={isWide ? 'min-w-0' : 'mt-3 w-full'}>
-        <h3 className="font-bold text-base line-clamp-1" style={{ color: 'var(--text-primary)' }}>
+        <h3 className="font-bold text-base line-clamp-2" style={{ color: 'var(--text-primary)' }}>
           {t(action.titleKey, action.name)}
         </h3>
         <p className="text-xs mt-1 text-secondary opacity-80 line-clamp-2" style={{ color: 'var(--text-secondary)' }}>

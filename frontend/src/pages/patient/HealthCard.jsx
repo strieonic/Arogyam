@@ -121,19 +121,19 @@ const HealthCard = () => {
                   <div className="flex-1 space-y-1.5 min-w-0">
                     <div>
                       <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Cardholder Name</p>
-                      <h3 className="text-lg text-white font-bold truncate leading-tight">{profileData?.name || 'N/A'}</h3>
+                      <h3 className="text-base sm:text-lg text-white font-bold break-words leading-tight">{profileData?.name || 'N/A'}</h3>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Arogyam ID</p>
-                        <h4 className="text-[11px] text-[var(--secondary-color)] font-mono font-bold truncate">
+                        <h4 className="text-[10px] sm:text-[11px] text-[var(--secondary-color)] font-mono font-bold break-all">
                           {profileData?.healthId || 'N/A'}
                         </h4>
                       </div>
                       <div>
                         <p className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">Aadhaar No.</p>
-                        <h4 className="text-[11px] text-white font-mono truncate">
+                        <h4 className="text-[10px] sm:text-[11px] text-white font-mono break-all">
                           {profileData?.aadhaar ? `XXXX XXXX ${profileData.aadhaar.slice(-4)}` : '—'}
                         </h4>
                       </div>
@@ -186,15 +186,15 @@ const HealthCard = () => {
                   <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-2">
                     <div>
                       <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Primary Contact</span>
-                      <p className="text-white font-medium truncate">{profileData?.phone || '—'}</p>
-                      <p className="text-[9px] text-[var(--text-tertiary)] truncate">{profileData?.email || '—'}</p>
+                      <p className="text-white font-medium break-all">{profileData?.phone || '—'}</p>
+                      <p className="text-[9px] text-[var(--text-tertiary)] break-all">{profileData?.email || '—'}</p>
                     </div>
                     <div>
                       <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Emergency Contact</span>
-                      <p className="text-white font-bold truncate">
+                      <p className="text-white font-bold break-all">
                         {profileData?.emergencyContact?.phone || profileData?.emergencyContact || '—'}
                       </p>
-                      <p className="text-[9px] text-[var(--text-tertiary)] truncate">
+                      <p className="text-[9px] text-[var(--text-tertiary)] break-words">
                         {profileData?.emergencyContact?.name || 'Primary'} ({profileData?.emergencyContact?.relation || 'Contact'})
                       </p>
                     </div>
@@ -202,7 +202,7 @@ const HealthCard = () => {
 
                   <div className="border-t border-white/5 pt-2">
                     <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold block">Known Allergies</span>
-                    <p className="text-[var(--accent-pink)] font-semibold truncate leading-none">{allergyList}</p>
+                    <p className="text-[var(--accent-pink)] font-semibold break-words leading-tight">{allergyList}</p>
                   </div>
                 </div>
 
@@ -310,15 +310,15 @@ const HealthCard = () => {
               <div className="grid grid-cols-2 gap-3 border-t card-border-sep pt-2">
                 <div>
                   <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Primary Contact</span>
-                  <p className="card-text-dark font-semibold">{profileData?.phone || '—'}</p>
-                  <p className="text-[9px] card-text-muted truncate">{profileData?.email || '—'}</p>
+                  <p className="card-text-dark font-semibold break-all">{profileData?.phone || '—'}</p>
+                  <p className="text-[9px] card-text-muted break-all">{profileData?.email || '—'}</p>
                 </div>
                 <div>
                   <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Emergency Contact</span>
-                  <p className="card-text-dark font-bold">
+                  <p className="card-text-dark font-bold break-all">
                     {profileData?.emergencyContact?.phone || profileData?.emergencyContact || '—'}
                   </p>
-                  <p className="text-[9px] card-text-muted truncate">
+                  <p className="text-[9px] card-text-muted break-words">
                     {profileData?.emergencyContact?.name || 'Primary'} ({profileData?.emergencyContact?.relation || 'Contact'})
                   </p>
                 </div>
@@ -326,7 +326,7 @@ const HealthCard = () => {
 
               <div className="border-t card-border-sep pt-2">
                 <span className="text-[8px] card-text-muted uppercase tracking-widest font-bold block">Known Allergies</span>
-                <p className="text-red-700 font-bold truncate">{allergyList}</p>
+                <p className="text-red-700 font-bold break-words">{allergyList}</p>
               </div>
             </div>
 

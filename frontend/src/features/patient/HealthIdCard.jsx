@@ -24,13 +24,13 @@ const HealthIdCard = ({ user }) => {
       transition={{ duration: 0.5 }}
     >
       {/* Top: Identity */}
-      <div className="flex justify-between items-start">
-        <div>
+      <div className="flex justify-between items-start gap-6">
+        <div className="min-w-0 flex-1">
           <p className="text-xs uppercase tracking-widest text-gray-400 mb-2">
             {t('patient.globalArogyam')}
           </p>
-          <h2 className="text-4xl font-bold text-white mb-1">{user?.name}</h2>
-          <p className="text-xl font-mono tracking-widest" style={{ color: 'var(--accent-primary)' }}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1 break-words">{user?.name}</h2>
+          <p className="text-lg sm:text-xl font-mono tracking-widest break-all" style={{ color: 'var(--accent-primary)' }}>
             {user?.healthId}
           </p>
           {user?.bloodGroup && (
@@ -41,7 +41,7 @@ const HealthIdCard = ({ user }) => {
         </div>
 
         {/* QR */}
-        <div className="bg-white p-2.5 rounded-xl shadow-lg">
+        <div className="bg-white p-2.5 rounded-xl shadow-lg flex-shrink-0">
           <QRCodeSVG value={user?.healthId || 'AROGYAM-GUEST'} size={80} level="M" />
         </div>
       </div>
