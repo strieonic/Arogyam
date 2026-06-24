@@ -135,6 +135,7 @@
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-xl: 32px;
+  --radius-2xl: 40px;
   --radius-full: 999px;
 }
 
@@ -371,7 +372,7 @@ button {
   border-bottom: 1px solid var(--border-subtle);
 }
 
-[data-theme="light"] .frosted-glass {
+:root[data-theme="light"] .frosted-glass {
   background: rgba(253, 251, 251, 0.85); /* off-white tint */
 }
 
@@ -528,8 +529,9 @@ input[type="file"].glass-input::file-selector-button:hover {
   margin-top: 0.25rem;
 }
 
-.bento-tile p {
-  font-size: 0.8rem !important;
+/* Only target description paragraphs, not metric/value text */
+.bento-tile .tile-desc {
+  font-size: 0.8rem;
   line-height: 1.4;
   color: var(--text-secondary);
 }
@@ -569,6 +571,11 @@ input[type="file"].glass-input::file-selector-button:hover {
   top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(90deg, transparent 0%, var(--skeleton-base) 50%, transparent 100%);
   animation: shimmer 1.5s infinite;
+}
+
+/* Used by App.jsx lazy-load spinner */
+.skeleton-pulse {
+  animation: spin 1s linear infinite;
 }
 
 /* ============================================================

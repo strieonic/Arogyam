@@ -450,43 +450,8 @@
   border-bottom: none;
 }
 
-/* ── Status Badge ── */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
 
-.status-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
 
-.status-badge.pending {
-  background: rgba(255, 179, 71, 0.12);
-  color: var(--warning);
-}
-.status-badge.pending::before { background: var(--warning); }
-
-.status-badge.approved {
-  background: rgba(52, 199, 89, 0.12);
-  color: var(--success);
-}
-.status-badge.approved::before { background: var(--success); }
-
-.status-badge.rejected {
-  background: rgba(255, 59, 48, 0.12);
-  color: var(--danger);
-}
-.status-badge.rejected::before { background: var(--danger); }
 
 /* ── Action Buttons ── */
 .action-btn-group {
