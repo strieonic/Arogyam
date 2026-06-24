@@ -40,15 +40,17 @@ export const inviteDoctor = async (req, res, next) => {
     await doctor.save();
 
     // Generate Invite Token
+    const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
     const inviteToken = jwt.sign(
       { doctorId: doctor._id, hospitalId },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: "7d" }
     );
 
     // In a real application, send this via email using Nodemailer.
     // For now, return it in the response for frontend dev/testing.
-    const setupLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/doctor/setup?token=${inviteToken}`;
+    const clientUrl = req.get('origin') || process.env.CLIENT_URL || 'http://localhost:5173';
+    const setupLink = `${clientUrl}/doctor/setup?token=${inviteToken}`;
 
     res.status(201).json({
       success: true,

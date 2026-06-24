@@ -102,10 +102,10 @@ const DoctorManagement = () => {
 
           {inviteLink && (
             <div className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
-              <p className="text-xs text-green-400 font-bold mb-1">Invitation Link Generated (Prototype Only):</p>
+              <p className="text-xs text-green-400 font-bold mb-1">Doctor Activation Link (Copy and share with the doctor):</p>
               <div className="flex items-center gap-2">
                 <input type="text" readOnly value={inviteLink} className="form-input flex-1 !py-1 text-sm bg-black/20" />
-                <button onClick={() => { navigator.clipboard.writeText(inviteLink); toast.success('Copied!'); }} className="secondary-btn !py-1 !px-3 text-sm">Copy</button>
+                <button onClick={() => { navigator.clipboard.writeText(inviteLink); toast.success('Copied!'); }} className="secondary-btn !py-1 !px-3 text-sm">Copy Link</button>
               </div>
             </div>
           )}

@@ -50,6 +50,7 @@ export const setupDoctorAccount = async (req, res, next) => {
     
     // For this prototype, we'll assume the hospital sends a JWT invite token
     const secret = process.env.JWT_SECRET || "arogyam_default_secret_123";
+    let decoded;
     try {
       decoded = jwt.verify(token, secret);
     } catch (e) {
