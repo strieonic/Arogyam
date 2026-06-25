@@ -7,6 +7,8 @@ import {
 } from "../controllers/recordController.js";
 
 import { protectHospital } from "../middleware/hospitalAuth.js";
+import { validate } from "../middleware/validate.js";
+import { uploadRecordSchema } from "../schemas/hospitalSchemas.js";
 
 const router = express.Router();
 
@@ -17,6 +19,7 @@ router.post(
   "/upload",
   protectHospital,
   memoryUpload.single("file"),
+  validate(uploadRecordSchema),
   uploadRecord,
 );
 

@@ -26,7 +26,7 @@ export const consentRequestSchema = z.object({
 export const uploadRecordSchema = z.object({
   healthId: z.string().min(3, "Arogyam ID required"),
   recordType: z.enum(
-    ["Prescription", "Lab Report", "Imaging", "Discharge Summary", "Vaccination", "Other"],
+    ["Prescription", "Lab Report", "Imaging", "Radiology", "Discharge Summary", "Vaccination", "Other"],
     { message: "Invalid record type" }
   ),
   notes: z.string().max(1000, "Notes too long").optional(),

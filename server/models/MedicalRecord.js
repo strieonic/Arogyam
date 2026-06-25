@@ -14,12 +14,24 @@ const medicalRecordSchema = new mongoose.Schema({
 
   recordType: {
     type: String,
-    enum: ["LAB", "XRAY", "PRESCRIPTION", "REPORT"],
+    enum: [
+      "Prescription",
+      "Lab Report",
+      "Imaging",
+      "Radiology",
+      "Discharge Summary",
+      "Vaccination",
+      "Other",
+    ],
     required: true,
   },
 
   fileUrl: String,
   notes: String,
+
+  // AI / OCR fields
+  extractedText: { type: String, default: "" },
+  aiSummary: { type: String, default: "" },
 
   // ⭐ OPTIONAL BUT USEFUL (audit/security)
   uploadedBy: {
@@ -36,4 +48,3 @@ medicalRecordSchema.index({ patient: 1, recordType: 1 });
 medicalRecordSchema.index({ hospital: 1, createdAt: -1 });
 
 export default mongoose.model("MedicalRecord", medicalRecordSchema);
-
