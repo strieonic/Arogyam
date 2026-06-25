@@ -11,13 +11,15 @@ export const consentRequestSchema = z.object({
   purpose: z
     .string()
     .min(5, "Purpose must be at least 5 characters")
-    .max(300, "Purpose too long"),
+    .max(300, "Purpose too long")
+    .optional(),
   durationDays: z
     .number({ invalid_type_error: "Duration must be a number" })
     .int()
     .min(1, "Minimum 1 day")
     .max(365, "Maximum 365 days")
-    .default(7),
+    .default(7)
+    .optional(),
 });
 
 /* ── Record Upload ── */
